@@ -1,0 +1,36 @@
+html{
+    background-color:beige
+}
+
+body {
+    width: 500px;
+    margin: 0 auto;
+}
+p, ol{
+    color:deeppink;
+}
+
+ul {
+    color:deepskyblue;
+}
+
+hr {
+    border-color: deeppink;
+}
+
+li {
+    letter-spacing: 2px;
+}
+
+.olCenter {
+    padding-left: 150px;
+}
+
+.center {
+ text-align: center;
+}
+
+img {
+    display: block;
+    margin: auto;
+}
