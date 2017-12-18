@@ -1,0 +1,62 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>FORM</title>
+    <!-- CSS suoraan html-tiedoston sisään -->
+    <style>
+        form {
+            margin: 0 auto;
+            width: 350px;
+            padding: 1em;
+            border: 1px solid;
+        }
+
+        form div+div {
+            margin-top: 1em;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input,
+        textarea {
+            width: 200px;
+            box-sizing: border-box;
+        }
+
+        /*Tämän ansiosta Kommentin label siirtyy textarean 1. riville pohjan sijasta*/
+
+        textarea {
+            vertical-align: top;
+        }
+
+        /*Painike tekstikenttien kanssa samaan linjaan*/
+
+        .button {
+            padding-left: 103px;
+        }
+    </style>
+</head>
+
+<body>
+    <form>
+        <div>
+            <label for="nimi">Nimi:</label>
+            <input type="text" />
+        </div>
+        <div>
+            <label for="kommentti">Kommentti:</label>
+            <textarea placeholder="Placeholder!"></textarea>
+        </div>
+        <div class="button">
+            <button type="submit">Jätä viesti</button>
+        </div>
+    </form>
+</body>
+
+</html>
