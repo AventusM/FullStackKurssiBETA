@@ -58,26 +58,30 @@ class App extends React.Component {
         }
     }
 
-    //Mielestäni paras vaihtoehto jokaiselle napille oma laskuri
-    //metodeineen iffihässäkän tms. sijaan
-    //Myöhemmässä tehtävässä tämäkin korjataan :)
     pressHyva = () => {
         this.setState({
             hyva: this.state.hyva + 1,
-            kaikki: this.state.kaikki.concat(1)
         })
     }
     pressNeutraali = () => {
         this.setState({
             neutraali: this.state.neutraali + 1,
-            kaikki: this.state.kaikki.concat(0)
         })
     }
     pressHuono = () => {
         this.setState({
             huono: this.state.huono + 1,
-            kaikki: this.state.kaikki.concat(-1)
         })
+    }
+
+    asetaArvoon = (arvo, funktio) => {
+        return () => {
+            this.setState({
+                kaikki: this.state.kaikki.concat(arvo)
+            })
+            //Funktio suoritetaan setStaten ulkopuolella (omat setStatet käytössä)
+            funktio();
+        }
     }
 
     render() {
@@ -89,13 +93,13 @@ class App extends React.Component {
                 <Esitys esitys="anna palautetta" />
                 <div>
                     <Button
-                        handleClick={this.pressHyva}
+                        handleClick={this.asetaArvoon(1, this.pressHyva)}
                         text="hyvä" />
                     <Button
-                        handleClick={this.pressNeutraali}
+                        handleClick={this.asetaArvoon(0, this.pressNeutraali)}
                         text="neutraali" />
                     <Button
-                        handleClick={this.pressHuono}
+                        handleClick={this.asetaArvoon(-1, this.pressHuono)}
                         text="huono" />
                 </div>
                 <Esitys esitys="statistiikka" />
