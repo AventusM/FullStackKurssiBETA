@@ -18,9 +18,11 @@ const Button = (props) => {
 //Statisticsin sisällä yksittäinen statistic
 //samoin kuin Sisältö -> Osa
 const Statistics = (props) => {
+    const taulunPituus = props.tulosTaulu.length
+    const prosenttiKerroin = 100
     const taulunSumma = props.tulosTaulu.reduce(function (a, b) { return a + b; })
-    const keskiArvo = taulunSumma / (props.tulosTaulu.length - 1)
-    const positiivistenOsuus = (props.tulosTaulu.filter(luku => luku > 0).length / (props.tulosTaulu.length - 1)) * 100
+    const keskiArvo = taulunSumma / taulunPituus
+    const positiivistenOsuus = (props.tulosTaulu.filter(luku => luku > 0).length / taulunPituus) * prosenttiKerroin
     console.log(props.tulosTaulu)
     console.log(taulunSumma)
     return (
@@ -50,9 +52,7 @@ class App extends React.Component {
             hyva: 0,
             neutraali: 0,
             huono: 0,
-            // Laitetaan nolla, muuten reduce valittaa errorista
-            // Keskiarvon laskusta vähennetään yksi jäsen myöhemmin
-            kaikki: [0]
+            kaikki: []
         }
     }
 
@@ -79,6 +79,9 @@ class App extends React.Component {
     }
 
     render() {
+        //Tämä asetus sallii taulukon lähtemisen liikkeelle
+        //täysin tyhjästä (ei päästä reducen tilanteeseen)
+        const noInputGiven = this.state.kaikki.length === 0
         return (
             <div>
                 <Esitys esitys="anna palautetta" />
@@ -95,11 +98,15 @@ class App extends React.Component {
                 </div>
                 <Esitys esitys="statistiikka" />
                 <div>
-                    <Statistics
-                        hyvienLKM={this.state.hyva}
-                        neutraaliLKM={this.state.neutraali}
-                        huonoLKM={this.state.huono}
-                        tulosTaulu={this.state.kaikki} />
+                    {/* Mallia otettu täältä https://reactjs.org/docs/conditional-rendering.html */}
+                    {noInputGiven ? (
+                        <p>yhtään palautetta ei ole annettu</p>
+                    ) : (
+                            <Statistics
+                                hyvienLKM={this.state.hyva}
+                                neutraaliLKM={this.state.neutraali}
+                                huonoLKM={this.state.huono}
+                                tulosTaulu={this.state.kaikki} />)}
                 </div>
             </div >
         )
