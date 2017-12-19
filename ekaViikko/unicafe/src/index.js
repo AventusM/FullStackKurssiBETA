@@ -28,11 +28,11 @@ const Statistics = (props) => {
     return (
         <table>
             <tbody>
-                <tr><Statistic etuliite="hyvä: " tulos={props.hyvienLKM} /></tr>
-                <tr><Statistic etuliite="neutraali: " tulos={props.neutraaliLKM} /></tr>
-                <tr><Statistic etuliite="huono: " tulos={props.huonoLKM} /></tr>
-                <tr><Statistic etuliite="keskiarvo: " tulos={keskiArvo} /></tr>
-                <tr><Statistic etuliite="positiivisia: " tulos={positiivistenOsuus} loppuliite="%" /></tr>
+                <Statistic etuliite="hyvä " tulos={props.hyvienLKM} />
+                <Statistic etuliite="neutraali " tulos={props.neutraaliLKM} />
+                <Statistic etuliite="huono " tulos={props.huonoLKM} />
+                <Statistic etuliite="keskiarvo " tulos={keskiArvo} />
+                <Statistic etuliite="positiivisia " tulos={positiivistenOsuus} loppuliite="%" />
             </tbody>
         </table>
     )
@@ -40,9 +40,11 @@ const Statistics = (props) => {
 
 const Statistic = (props) => {
     return (
-        <td>
-            {props.etuliite} {props.tulos} {props.loppuliite}
-        </td>
+        <tr>
+            <td>{props.etuliite}</td>
+            <td>{props.tulos}</td>
+            <td>{props.loppuliite}</td>
+        </tr>
     )
 }
 class App extends React.Component {
