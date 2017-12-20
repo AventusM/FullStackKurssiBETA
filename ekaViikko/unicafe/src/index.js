@@ -80,6 +80,7 @@ class App extends React.Component {
                 kaikki: this.state.kaikki.concat(arvo)
             })
             //Funktio suoritetaan setStaten ulkopuolella (omat setStatet käytössä)
+            //pressHyva / pressNeutraali / pressHuono
             funktio();
         }
     }
