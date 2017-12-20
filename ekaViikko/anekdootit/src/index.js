@@ -17,41 +17,56 @@ const DisplayVotes = (props) => {
     )
 }
 
+const DisplayMostVotes = (props) => {
+    return (
+        <div>
+            <h2>anecdote with most votes:</h2>
+            <p>{props.anecdote}</p>
+            <DisplayVotes votes={props.votes} />
+        </div>
+    )
+}
+
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selected: 0,
-            allShown: []
+            selectedAnecdote: 0,
+            allShownSoFar: []
         }
     }
 
-    getRandomAnecdote = (number) => {
+    setRandomAnecdote = (number) => {
         return () => {
-            this.setState({ selected: number })
+            this.setState({ selectedAnecdote: number })
         }
     }
 
     asetaYksiLisaaNykyiseenIndeksiin = () => {
         return () => {
-            this.setState({ allShown: this.state.allShown.concat(this.state.selected) })
+            this.setState({ allShownSoFar: this.state.allShownSoFar.concat(this.state.selectedAnecdote) })
         }
     }
 
+    //Laskun idea
+    //Järjestetään olemassaoleva allShownSoFar - taulu
+    //Loop per indeksi O(n^2...)
+    //Otetaan talteen suurimman luvun omaava indeksi..?
     render() {
-        console.log(this.state.selected)
-        console.log(this.state.allShown)
-        const amountOfVotesForCurrentIndex = this.state.allShown.filter(luku => luku === this.state.selected).length
+        console.log(this.props.anecdotes.length)
+        const amountOfVotesForCurrentIndex = this.state.allShownSoFar.filter(luku => luku === this.state.selectedAnecdote).length
         return (
             <div>
-                {this.props.anecdotes[this.state.selected]}
+                {this.props.anecdotes[this.state.selectedAnecdote]}
                 <DisplayVotes votes={amountOfVotesForCurrentIndex} />
                 <div>
                     <Button handleClick={this.asetaYksiLisaaNykyiseenIndeksiin()}
                         text="vote" />
-                    <Button handleClick={this.getRandomAnecdote(Math.floor(Math.random() * 6))}
+                    <Button handleClick={this.setRandomAnecdote(Math.floor(Math.random() * this.props.anecdotes.length))}
                         text="next anecdote" />
                 </div>
+                {/* <DisplayMostVotes anecdote={this.props.anecdotes[maxVotesIndex]}
+                    votes={maxVotes} /> */}
             </div >
         )
     }
