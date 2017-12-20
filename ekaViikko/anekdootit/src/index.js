@@ -3,10 +3,16 @@ import ReactDOM from 'react-dom'
 
 const Button = (props) => {
     return (
+        <button onClick={props.handleClick}>
+            {props.text}
+        </button>
+    )
+}
+
+const DisplayVotes = (props) => {
+    return (
         <div>
-            <button onClick={props.handleClick}>
-                {props.text}
-            </button>
+            has {props.votes} votes
         </div>
     )
 }
@@ -15,7 +21,8 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selected: 0
+            selected: 0,
+            allShown: []
         }
     }
 
@@ -25,13 +32,27 @@ class App extends React.Component {
         }
     }
 
+    asetaYksiLisaaNykyiseenIndeksiin = () => {
+        return () => {
+            this.setState({ allShown: this.state.allShown.concat(this.state.selected) })
+        }
+    }
+
     render() {
+        console.log(this.state.selected)
+        console.log(this.state.allShown)
+        const amountOfVotesForCurrentIndex = this.state.allShown.filter(luku => luku === this.state.selected).length
         return (
             <div>
                 {this.props.anecdotes[this.state.selected]}
-                <Button handleClick={this.getRandomAnecdote(Math.floor(Math.random() * 6))}
-                    text="next anecdote" />
-            </div>
+                <DisplayVotes votes={amountOfVotesForCurrentIndex} />
+                <div>
+                    <Button handleClick={this.asetaYksiLisaaNykyiseenIndeksiin()}
+                        text="vote" />
+                    <Button handleClick={this.getRandomAnecdote(Math.floor(Math.random() * 6))}
+                        text="next anecdote" />
+                </div>
+            </div >
         )
     }
 }
