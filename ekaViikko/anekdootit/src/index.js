@@ -48,6 +48,22 @@ class App extends React.Component {
         }
     }
 
+    mostFrequent = () => {
+        return () => {
+            let counts = {}
+            for (let i = 0; i < this.state.allShownSoFar.length; i++) {
+                let num = this.state.allShownSoFar[i]
+                counts[num] = counts[num] ? counts[num] + 1 : 1
+            }
+            console.log("If it hurts... " + counts[0])
+            console.log("Adding manpower... " + counts[1])
+            console.log("The first 90 percent..." + counts[2])
+            console.log("Any fool can write..." + counts[3])
+            console.log("Premature optimization..." + counts[4])
+            console.log("Debugging is twice as hard if youre stupid..." + counts[5])
+        }
+    }
+
     //Laskun idea
     //Järjestetään olemassaoleva allShownSoFar - taulu
     //Loop per indeksi O(n^2...)
@@ -55,6 +71,21 @@ class App extends React.Component {
     render() {
         console.log(this.props.anecdotes.length)
         const amountOfVotesForCurrentIndex = this.state.allShownSoFar.filter(luku => luku === this.state.selectedAnecdote).length
+        // const mostFrequent = function () {
+        //     let counts = []
+        //     for (let i = 0; i < this.state.allShownSoFar.length; i++) {
+        //         let num = this.state.allShownSoFar.length[i]
+        //         counts[num] = counts[num] ? counts[num] + 1 : 1
+        //     }
+        //     console.log("If it hurts... " + counts[0])
+        //     console.log("Adding manpower... " + counts[1])
+        //     console.log("The first 90 percent..." + counts[2])
+        //     console.log("Any fool can write..." + counts[3])
+        //     console.log("Premature optimization..." + counts[4])
+        //     console.log("Debugging is twice as hard if youre stupid..." + counts[5])
+        // }
+        console.log(this.mostFrequent.bind(this))
+
         return (
             <div>
                 {this.props.anecdotes[this.state.selectedAnecdote]}
