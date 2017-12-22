@@ -20,10 +20,12 @@ class App extends React.Component {
     addNewEntry = (event) => {
         //Estetään sivun reload
         event.preventDefault()
+
         //lisätään uusi alkio joka lisätään persons - taulukkoon (uusi taulu)
         const newObject = {
             name: this.state.newName
         }
+
         //Katenoidaan uusi alkio taulukkoon ja päivitetään persons - taulukon state
         const allPersons = this.state.persons.concat(newObject)
         this.setState({
@@ -36,12 +38,22 @@ class App extends React.Component {
 
     }
 
+    //window.alert päivittää sivua jos nappia ei paina heti (ajankäyttöilmoitus ??)
+    noAction = (event) => {
+        event.preventDefault()
+    }
+
 
     render() {
+        const hasDuplicate = this.state.persons.some(x => x.name === this.state.newName)
+        console.log(hasDuplicate)
+        const addOrNotify = hasDuplicate ?
+            this.noAction :
+            this.addNewEntry
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
-                <form onSubmit={this.addNewEntry}>
+                <form onSubmit={addOrNotify}>
                     <div>
                         nimi: <input
                             value={this.state.newName}
