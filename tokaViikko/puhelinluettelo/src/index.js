@@ -1,16 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios'
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            persons: [
-                { name: 'Arto Hellas', number: '040-123456' },
-                { name: 'Martti Tienari', number: '040-123456' },
-                { name: 'Arto Järvinen', number: '040-123456' },
-                { name: 'Lea Kutvonen', number: '040-123456' }
-            ],
+            //Data haetaan nyt db.json - tiedostosta
+            persons: [],
             newName: '',
             newNumber: '',
             filter: ''
@@ -63,6 +60,15 @@ class App extends React.Component {
         console.log("Duplikaatti huomattu")
     }
 
+    //lifeCycle - metodit tänne renderimetodin lähelle. Erityismetodit
+    //get / post vähän niinkuin sparkin vastaavat.
+    //.then on fulfilled promisen tapahtumankuuntelija
+    //then saa vastauksena olion result missä on headerit, data yms.
+    componentWillMount() {
+        axios.get('http://localhost:3001/persons').then(res => {
+            this.setState({ persons: res.data })
+        })
+    }
 
     render() {
         const hasDuplicate = this.state.persons.some(person => person.name === this.state.newName)
