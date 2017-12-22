@@ -27,20 +27,14 @@ class App extends React.Component {
     render() {
         const filteredCountries = this.state.countries.filter(country => country.name.toLowerCase().includes(this.state.input_country.toLowerCase()))
         const tooMany = filteredCountries.length > 10
-        // console.log('näytettyjen maiden määrä ---> ' + countriesShown)
-        // const showFilteredCountries = countriesShown > 10 ?
-        //     "täsmennä hakuasi!" :
-        //     filteredCountries
-        // console.log(showFilteredCountries)
+        const oneRemaining = filteredCountries.length === 1
         return (
             <div>
                 find countries:
                 <input
                     value={this.state.input_country}
                     onChange={this.handleCountryInputFieldChange} />
-                {tooMany ?
-                    (<p><strong>ole hyvä ja täsmennä hakuasi</strong></p>) :
-                    (<Countries countries={filteredCountries} />)}
+                {tooMany ? (<p><strong>ole hyvä ja täsmennä hakuasi</strong></p>) : (oneRemaining ? (<Country country={filteredCountries[0]} />) : (<Countries countries={filteredCountries} />))}
             </div>
         )
     }
@@ -60,23 +54,16 @@ const Country = (props) => {
 
 const Countries = (props) => {
     const { countries } = (props)
-    const oneRemaining = countries.length === 1
-    console.log(oneRemaining)
     return (
         <div>
-            {oneRemaining ?
-                //Yhden alkion taulukko.. näyttää hassulta, jäljellä ei tosin ole muita...
-                //mutta ternaryoperaatioiden ketjutus ei onnistunut
-                //App-komponentissa, joten siirretään se tänne...
-                (<Country country={countries[0]} />) : // oneRemaining ---> true
-                (<table>
-                    <tbody>
-                        {countries.map(country =>
-                            <tr key={country.name}>
-                                <td>{country.name}</td>
-                            </tr>)}
-                    </tbody>
-                </table>)}
+            <table>
+                <tbody>
+                    {countries.map(country =>
+                        <tr key={country.name}>
+                            <td>{country.name}</td>
+                        </tr>)}
+                </tbody>
+            </table>
         </div>
     )
 }
