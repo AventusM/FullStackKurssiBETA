@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios'
 import personService from './services/persons'
 
 class App extends React.Component {
@@ -72,6 +73,19 @@ class App extends React.Component {
             })
     }
 
+    deletePerson = (id) => (e) => {
+        e.preventDefault
+        // Ternary ei halua käydä tähän tarkoitukseen
+        const poistettavaHenkilo = this.state.persons.find(person => person.id === id)
+        if (window.confirm('Poistetaanko ' + poistettavaHenkilo.name + '?')) {
+            this.setState({
+                persons: this.state.persons.filter(person => person.id !== id)
+            })
+            personService
+                .remove(id)
+        }
+    }
+
     render() {
         const hasDuplicate = this.state.persons.some(person => person.name === this.state.newName)
         console.log(hasDuplicate)
@@ -84,7 +98,6 @@ class App extends React.Component {
             <div>
                 <h2>Puhelinluettelo</h2>
                 <InputField prefix="rajaa näytettäviä" value={this.state.filter} onChangeFunction={this.handleFilterInputFieldChange} />
-                {/* Tehtävänannossa ei ole olemassaolevan numeronmuutosta... */}
                 <h3>Lisää uusi / muuta olemassaolevan numeroa</h3>
                 <form onSubmit={addOrNotify}>
                     <InputField prefix="nimi" value={this.state.newName} onChangeFunction={this.handleNameInputFieldChange} />
@@ -92,8 +105,10 @@ class App extends React.Component {
                     <SubmitButton type="submit" sisalto="lisaa" />
                 </form>
                 <h2>Numerot</h2>
-                {/* näytetään rajatut */}
-                <Persons persons={showFilteredPersons} />
+                {/* bind this removeFunctioniin jos valittaa undefinedista
+                viite menee toiseen literaaliin -> saadaan tällä tavalla ongelma 'ratkaistua' */}
+                {/* <Persons persons={showFilteredPersons} removeFunction={this.deletePerson.bind(this)} /> */}
+                <Persons persons={showFilteredPersons} deletePerson={this.deletePerson.bind(this)} />
             </div >
         )
     }
@@ -119,15 +134,16 @@ const InputField = (props) => {
 }
 
 const Persons = (props) => {
-    const { persons } = props
+    const { persons, deletePerson } = props
     return (
         <div>
             <table>
                 <tbody>
                     {persons.map(person =>
-                        <tr key={person.name}>
+                        <tr key={person.id}>
                             <td>{person.name}</td>
                             <td>{person.number}</td>
+                            <td><button onClick={deletePerson(person.id)}>poista</button></td>
                         </tr>)}
                 </tbody>
             </table>
