@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios'
+import personService from './services/persons'
 
 class App extends React.Component {
     constructor(props) {
@@ -42,7 +42,7 @@ class App extends React.Component {
             number: this.state.newNumber
         }
 
-        axios.post('http://localhost:3001/persons', newObject)
+        personService.create(newObject)
             .then(res => {
                 this.setState({
                     persons: this.state.persons.concat(res.data),
@@ -51,17 +51,6 @@ class App extends React.Component {
                     filter: ''
                 })
             })
-        // //Katenoidaan uusi alkio taulukkoon ja päivitetään persons - taulukon state
-        // const allPersons = this.state.persons.concat(newObject)
-        // this.setState({
-        //     persons: allPersons,
-        //     //Tyhjennetään inputField lisäyksen jälkeen
-        //     newName: '',
-        //     newNumber: '',
-        //     filter: ''
-        // })
-
-        // console.log(allPersons)
 
     }
 
@@ -76,9 +65,11 @@ class App extends React.Component {
     //.then on fulfilled promisen tapahtumankuuntelija
     //then saa vastauksena olion result missä on headerit, data yms.
     componentWillMount() {
-        axios.get('http://localhost:3001/persons').then(res => {
-            this.setState({ persons: res.data })
-        })
+        personService
+            .getAll()
+            .then(res => {
+                this.setState({ persons: res.data })
+            })
     }
 
     render() {

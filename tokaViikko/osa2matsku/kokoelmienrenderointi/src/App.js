@@ -52,6 +52,12 @@ class App extends React.Component {
                         notes: restNotes.concat(res.data)
                     })
                 })
+                .catch(err => {
+                    alert(`muistiinpano ' ${foundNote.content} ' on poistettu, mutta tilannetta ei vielä synkronoitu... korjataan tilanne!`)
+                    this.setState({
+                        notes: this.state.notes.filter(note => note.id !== id)
+                    })
+                })
         }
     }
 
