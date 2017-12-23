@@ -30,6 +30,8 @@ class App extends React.Component {
     }
 
     //Tapahtumakuuntelija nimen- ja puhnronlisäysnapille
+
+    //axios.post()
     addNewEntry = (event) => {
         //Estetään sivun reload
         event.preventDefault()
@@ -40,17 +42,26 @@ class App extends React.Component {
             number: this.state.newNumber
         }
 
-        //Katenoidaan uusi alkio taulukkoon ja päivitetään persons - taulukon state
-        const allPersons = this.state.persons.concat(newObject)
-        this.setState({
-            persons: allPersons,
-            //Tyhjennetään inputField lisäyksen jälkeen
-            newName: '',
-            newNumber: '',
-            filter: ''
-        })
+        axios.post('http://localhost:3001/persons', newObject)
+            .then(res => {
+                this.setState({
+                    persons: this.state.persons.concat(res.data),
+                    newName: '',
+                    newNumber: '',
+                    filter: ''
+                })
+            })
+        // //Katenoidaan uusi alkio taulukkoon ja päivitetään persons - taulukon state
+        // const allPersons = this.state.persons.concat(newObject)
+        // this.setState({
+        //     persons: allPersons,
+        //     //Tyhjennetään inputField lisäyksen jälkeen
+        //     newName: '',
+        //     newNumber: '',
+        //     filter: ''
+        // })
 
-        console.log(allPersons)
+        // console.log(allPersons)
 
     }
 

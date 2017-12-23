@@ -1,24 +1,19 @@
 import React from 'react'
 
+//Saattaa olla ihan kiva apu edellisen kappaleen
+//tehtävään.. Tee myöhemmin jos muistat
 const Note = (props) => {
-    //Jätetään funktion omat parametrit rauhaan
-    //Ja tehdään tarvittava muutos NoteteraaNoten sisällä
-    //Tiedetään, että tänne päästään tunnuksella 'note'
-    // -> eristetään se toisen NoteteraaNoten avulla
-    const { note } = props
-    console.log(note)
-    //Testi omaan käyttöön
-    const getStatus =
-        note.important ?
-            "on" :
-            "ei"
+    const { note, toggleImportance } = props
+    const label = note.important ?
+        'make not important' : //True -> pitää tehdä ei-tärkeäksi
+        'make important'
     return (
         <li>
-            {/* Booleania ei printata suoraan, täytyy kikkailla ohtun tapaan... */}
-            {/* Käytetään mieluummin "on"/"ei" truen ja falsen sijasta... */}
-            {note.content} - Tärkeä? {getStatus}
+            {note.content}
+            <button onClick={toggleImportance}>
+                {label}
+            </button>
         </li>
     )
 }
-//Exportataan juuri 'Note' - literaali
 export default Note

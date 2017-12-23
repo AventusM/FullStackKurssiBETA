@@ -47,7 +47,7 @@ const Country = (props) => {
             <h3>{country.name} {country.nativeName}</h3>
             <p>capital: {country.capital}</p>
             <p>population: {country.population}</p>
-            <img src={country.flag} />
+            <img src={country.flag} alt='' />
         </div >
     )
 }
