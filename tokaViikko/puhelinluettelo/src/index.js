@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios'
+// import axios from 'axios'
 import personService from './services/persons'
 
 class App extends React.Component {
@@ -89,20 +89,15 @@ class App extends React.Component {
     updatePerson = (id) => {
         return (event) => {
             event.preventDefault()
-            const url = `http://localhost:3001/persons/${id}`
             const person = this.state.persons.find(p => p.id === id)
             const changedPerson = { ...person, number: this.state.newNumber }
-            console.log(url)
-            console.log(person)
-            console.log(changedPerson)
-            axios.put(url, changedPerson)
+            personService.update(id, changedPerson)
                 .then(res => {
                     const remainingPersons = this.state.persons.filter(p => p.id !== id)
                     this.setState({
                         persons: remainingPersons.concat(res.data)
                     })
                 })
-
         }
     }
 
