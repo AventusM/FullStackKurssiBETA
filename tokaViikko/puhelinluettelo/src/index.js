@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import axios from 'axios'
 import personService from './services/persons'
+import './index.css'
 
 class App extends React.Component {
     constructor(props) {
@@ -11,7 +11,8 @@ class App extends React.Component {
             persons: [],
             newName: '',
             newNumber: '',
-            filter: ''
+            filter: '',
+            msg: null
         }
     }
 
@@ -49,9 +50,13 @@ class App extends React.Component {
                     persons: this.state.persons.concat(res.data),
                     newName: '',
                     newNumber: '',
-                    filter: ''
+                    filter: '',
+                    msg: 'lisättiin ' + newObject.name
                 })
             })
+        setTimeout(() => {
+            this.setState({ msg: null })
+        }, 5000)
 
     }
 
@@ -79,8 +84,12 @@ class App extends React.Component {
         const poistettavaHenkilo = this.state.persons.find(person => person.id === id)
         if (window.confirm('Poistetaanko ' + poistettavaHenkilo.name + '?')) {
             this.setState({
-                persons: this.state.persons.filter(person => person.id !== id)
+                persons: this.state.persons.filter(person => person.id !== id),
+                msg: 'käyttäjä ' + poistettavaHenkilo.name + ' poistettu'
             })
+            setTimeout(() => {
+                this.setState({ msg: null })
+            }, 5000)
             personService
                 .remove(id)
         }
@@ -95,8 +104,13 @@ class App extends React.Component {
                 .then(res => {
                     const remainingPersons = this.state.persons.filter(p => p.id !== id)
                     this.setState({
-                        persons: remainingPersons.concat(res.data)
+                        persons: remainingPersons.concat(res.data),
+                        msg: 'käyttäjän ' + changedPerson.name + ' numero on vaihdettu',
+
                     })
+                    setTimeout(() => {
+                        this.setState({ msg: null })
+                    }, 5000)
                 })
         }
     }
@@ -117,6 +131,7 @@ class App extends React.Component {
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+                <Notification message={this.state.msg} />
                 <InputField prefix="rajaa näytettäviä" value={this.state.filter} onChangeFunction={this.handleFilterInputFieldChange} />
                 <h3>Lisää uusi / muuta olemassaolevan numeroa</h3>
                 <form onSubmit={addOrEdit}>
@@ -147,7 +162,7 @@ const InputField = (props) => {
     const { prefix, value, onChangeFunction } = props
     return (
         <div>
-            {prefix}:
+            {prefix}:<br />
             <input value={value} onChange={onChangeFunction} />
         </div>
     )
@@ -167,6 +182,18 @@ const Persons = (props) => {
                         </tr>)}
                 </tbody>
             </table>
+        </div>
+    )
+}
+
+const Notification = (props) => {
+    const { message } = props
+    if (message === null) {
+        return null
+    }
+    return (
+        <div className="info">
+            {message}
         </div>
     )
 }
