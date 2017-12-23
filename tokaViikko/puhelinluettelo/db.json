@@ -2,8 +2,8 @@
   "persons": [
     {
       "name": "Anton",
-      "number": "123",
-      "id": 3
+      "number": "",
+      "id": 1
     }
   ]
 }

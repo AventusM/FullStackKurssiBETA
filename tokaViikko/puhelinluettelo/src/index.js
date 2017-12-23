@@ -105,12 +105,23 @@ class App extends React.Component {
                     const remainingPersons = this.state.persons.filter(p => p.id !== id)
                     this.setState({
                         persons: remainingPersons.concat(res.data),
-                        msg: 'käyttäjän ' + changedPerson.name + ' numero on vaihdettu',
-
+                        msg: 'käyttäjän ' + changedPerson.name + ' numero on vaihdettu'
                     })
                     setTimeout(() => {
                         this.setState({ msg: null })
                     }, 5000)
+                    //Seuraa sulkeita, niin tiedät missä .thenin vaikutusalue loppuu
+                }).catch(err => {
+                    personService.create(changedPerson)
+                        .then(res => {
+                            this.setState({
+                                persons: this.state.persons.concat(res.data),
+                                msg: 'käyttäjä uudelleenlisätty, joku poisti käyttäjän ' + changedPerson.name + ' ennen muokkaustasi... Duplikaatti katoaa uudelleenlatauksella...'
+                            })
+                            setTimeout(() => {
+                                this.setState({ msg: null })
+                            }, 5000)
+                        })
                 })
         }
     }
