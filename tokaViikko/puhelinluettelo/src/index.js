@@ -86,20 +86,45 @@ class App extends React.Component {
         }
     }
 
+    updatePerson = (id) => {
+        return (event) => {
+            event.preventDefault()
+            const url = `http://localhost:3001/persons/${id}`
+            const person = this.state.persons.find(p => p.id === id)
+            const changedPerson = { ...person, number: this.state.newNumber }
+            console.log(url)
+            console.log(person)
+            console.log(changedPerson)
+            axios.put(url, changedPerson)
+                .then(res => {
+                    const remainingPersons = this.state.persons.filter(p => p.id !== id)
+                    this.setState({
+                        persons: remainingPersons.concat(res.data)
+                    })
+                })
+
+        }
+    }
+
     render() {
         const hasDuplicate = this.state.persons.some(person => person.name === this.state.newName)
-        console.log(hasDuplicate)
-        const addOrNotify = hasDuplicate ?
-            this.noAction :
+        const duplikaatti = this.state.persons.find(person => person.name === this.state.newName)
+        const byID = (person1, person2) => person1.id - person2.id
+        hasDuplicate ?
+            console.log(duplikaatti.name) :
+            console.log('ei duplikaatteja')
+        const addOrEdit = hasDuplicate ?
+            this.updatePerson(duplikaatti.id) :
             this.addNewEntry
         //Case - insensitivity ---> tehdään vertailu pienillä kirjaimilla
-        const showFilteredPersons = this.state.persons.filter(person => person.name.toLowerCase().includes(this.state.filter.toLowerCase()))
+        const filterPersons = this.state.persons.filter(person => person.name.toLowerCase().includes(this.state.filter.toLowerCase()))
+        const showFilteredPersons = filterPersons.sort(byID)
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
                 <InputField prefix="rajaa näytettäviä" value={this.state.filter} onChangeFunction={this.handleFilterInputFieldChange} />
                 <h3>Lisää uusi / muuta olemassaolevan numeroa</h3>
-                <form onSubmit={addOrNotify}>
+                <form onSubmit={addOrEdit}>
                     <InputField prefix="nimi" value={this.state.newName} onChangeFunction={this.handleNameInputFieldChange} />
                     <InputField prefix="numero" value={this.state.newNumber} onChangeFunction={this.handleNumberInputFieldChange} />
                     <SubmitButton type="submit" sisalto="lisaa" />
