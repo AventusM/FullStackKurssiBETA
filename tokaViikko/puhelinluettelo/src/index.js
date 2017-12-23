@@ -60,16 +60,11 @@ class App extends React.Component {
 
     }
 
-    //window.alert päivittää sivua jos nappia ei paina heti (ajankäyttöilmoitus ??)
     noAction = (event) => {
         event.preventDefault()
         console.log("Duplikaatti huomattu")
     }
 
-    //lifeCycle - metodit tänne renderimetodin lähelle. Erityismetodit
-    //get / post vähän niinkuin sparkin vastaavat.
-    //.then on fulfilled promisen tapahtumankuuntelija
-    //then saa vastauksena olion result missä on headerit, data yms.
     componentWillMount() {
         personService
             .getAll()
@@ -100,6 +95,7 @@ class App extends React.Component {
             event.preventDefault()
             const person = this.state.persons.find(p => p.id === id)
             const changedPerson = { ...person, number: this.state.newNumber }
+
             personService.update(id, changedPerson)
                 .then(res => {
                     const remainingPersons = this.state.persons.filter(p => p.id !== id)
@@ -110,6 +106,7 @@ class App extends React.Component {
                     setTimeout(() => {
                         this.setState({ msg: null })
                     }, 5000)
+
                     //Seuraa sulkeita, niin tiedät missä .thenin vaikutusalue loppuu
                 }).catch(err => {
                     personService.create(changedPerson)
@@ -128,7 +125,7 @@ class App extends React.Component {
 
     render() {
         const hasDuplicate = this.state.persons.some(person => person.name === this.state.newName)
-        const duplikaatti = this.state.persons.find(person => person.name === this.state.newName)
+        const duplikaatti = this.state.persons.find(person => person.name === this.state.newName) // Varmaan toisteista tietoa...
         const byID = (person1, person2) => person1.id - person2.id
         hasDuplicate ?
             console.log(duplikaatti.name) :
@@ -138,10 +135,11 @@ class App extends React.Component {
             this.addNewEntry
         //Case - insensitivity ---> tehdään vertailu pienillä kirjaimilla
         const filterPersons = this.state.persons.filter(person => person.name.toLowerCase().includes(this.state.filter.toLowerCase()))
-        const showFilteredPersons = filterPersons.sort(byID)
+        const showFilteredPersonsInOrder = filterPersons.sort(byID)
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+                <hr />
                 <Notification message={this.state.msg} />
                 <InputField prefix="rajaa näytettäviä" value={this.state.filter} onChangeFunction={this.handleFilterInputFieldChange} />
                 <h3>Lisää uusi / muuta olemassaolevan numeroa</h3>
@@ -150,11 +148,10 @@ class App extends React.Component {
                     <InputField prefix="numero" value={this.state.newNumber} onChangeFunction={this.handleNumberInputFieldChange} />
                     <SubmitButton type="submit" sisalto="lisaa" />
                 </form>
+                <hr />
                 <h2>Numerot</h2>
-                {/* bind this removeFunctioniin jos valittaa undefinedista
-                viite menee toiseen literaaliin -> saadaan tällä tavalla ongelma 'ratkaistua' */}
-                {/* <Persons persons={showFilteredPersons} removeFunction={this.deletePerson.bind(this)} /> */}
-                <Persons persons={showFilteredPersons} deletePerson={this.deletePerson.bind(this)} />
+                {/* Jos valittaa jostain, niin vaihda InOrder nimi pois..? */}
+                <Persons persons={showFilteredPersonsInOrder} deletePerson={this.deletePerson.bind(this)} />
             </div >
         )
     }
