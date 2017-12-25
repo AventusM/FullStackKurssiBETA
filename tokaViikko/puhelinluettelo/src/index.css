@@ -1,10 +1,11 @@
 body {
   width: 350px;
   margin: 0 auto;
+  margin-top: 4em; 
   font-family: sans-serif;
   padding-left: 2em;
-  border: 1px solid #CCC;
-  border-radius: 0.5em;
+  border: 3px outset tomato;
+  border-radius: 2em;
 }
 
 .info{
