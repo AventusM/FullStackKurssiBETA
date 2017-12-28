@@ -16,7 +16,10 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const cors = require('cors')
+
 app.use(bodyParser.json()) // POST
+app.use(cors())
 
 //Palautetaan tilanne ennalleen, jos tehdään testejä postmanilla
 let notes = [

@@ -126,7 +126,8 @@ class App extends React.Component {
     render() {
         const hasDuplicate = this.state.persons.some(person => person.name === this.state.newName)
         const duplikaatti = this.state.persons.find(person => person.name === this.state.newName) // Varmaan toisteista tietoa...
-        const byID = (person1, person2) => person1.id - person2.id
+        // const byID = (person1, person2) => person1.id - person2.id
+        const byID = (person1, person2) => person1.id < person2.id ? -1 : 1
         hasDuplicate ?
             console.log(duplikaatti.name) :
             console.log('ei duplikaatteja')
