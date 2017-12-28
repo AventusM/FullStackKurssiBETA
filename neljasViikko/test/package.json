@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "watch": "node_modules/.bin/nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/jest --verbose test"
   },
   "author": "AntonM",
   "license": "MIT",
@@ -19,6 +19,7 @@
     "morgan": "^1.9.0"
   },
   "devDependencies": {
+    "jest": "^22.0.4",
     "nodemon": "^1.14.3"
   }
 }
