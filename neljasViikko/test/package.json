@@ -4,15 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "watch": "node_modules/.bin/nodemon index.js",
-    "test": "node_modules/.bin/jest --verbose test"
+    "start": "NODE_ENV=production node index.js",
+    "watch": "NODE_ENV=development node_modules/.bin/nodemon index.js",
+    "test": "NODE_ENV=test node_modules/.bin/jest --verbose test"
   },
   "author": "AntonM",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
+    "dotenv": "^4.0.0",
     "express": "^4.16.2",
     "mongodb": "^3.0.1",
     "mongoose": "^4.13.8",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "jest": "^22.0.4",
-    "nodemon": "^1.14.3"
+    "nodemon": "^1.14.3",
+    "supertest": "^3.0.0"
   }
 }

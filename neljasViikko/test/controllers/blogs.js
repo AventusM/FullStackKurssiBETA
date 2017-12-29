@@ -4,14 +4,17 @@ const blogsRouter = express.Router()
 const bodyParser = require('body-parser')
 blogsRouter.use(bodyParser.json())
 
-blogsRouter.get('/', (req, res) => {
+blogsRouter.get('/', async (req, res) => {
     console.log("GET")
-    Blog
-        .find({})
-        .then(blogs => {
-            console.log(blogs)
-            res.json(blogs)
-        })
+    // Blog
+    //     .find({})
+    //     .then(blogs => {
+    //         console.log(blogs)
+    //         res.json(blogs)
+    //     })
+    const blogs = await Blog.find({})
+    console.log(blogs)
+    res.json(blogs)
 })
 
 blogsRouter.post('/', (req, res) => {
