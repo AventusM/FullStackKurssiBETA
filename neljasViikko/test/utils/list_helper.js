@@ -2,13 +2,21 @@ const dummy = (bloglist) => {
     return 1
 }
 
-const totalLikes = (array) => {
+const totalLikes = (bloglist) => {
     const sumReducer = (sum, item) => {
         return sum + item
     }
-    return array.length === 0 ?
+    return bloglist.length === 0 ?
         0 :
-        array.map(blog => blog.likes).reduce(sumReducer, 0)
+        bloglist.map(blog => blog.likes).reduce(sumReducer, 0)
 }
 
-module.exports = { dummy, totalLikes }
+const favoriteBlog = (bloglist) => {
+    const mostLikes = Math.max.apply(null, bloglist.map(blog => blog.likes))
+    //Otetaan ensimmäinen (jos monta samanlukuista)
+    return bloglist.length === 0 ?
+        "No blogs specified" :
+        bloglist.filter(blog => blog.likes === mostLikes)[0]
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog }

@@ -58,3 +58,40 @@ describe('total likes', () => {
         expect(result).toBe(0)
     })
 })
+
+describe('most likes', () => {
+    const listWithTwoBlogs = [
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 5,
+            __v: 0
+        },
+        {
+            _id: '5a422aa71b54a676234d17f1',
+            title: 'Microservices',
+            author: 'Martin Fowler',
+            url: 'https://martinfowler.com/articles/microservices.html',
+            likes: 90,
+            __v: 0
+        }
+    ]
+
+    test('of list with two blogs is the one by Martin Fowler', () => {
+        // const maxLikesOfMap = Math.max.apply(null, listWithTwoBlogs.map(blog => blog.likes))
+        // console.log(maxLikesOfMap)
+        //Otetaan 1. matchi, voi olla duplikaattejakin
+        const result = listHelper.favoriteBlog(listWithTwoBlogs)
+        console.log(result)
+        expect(result.title).toBe('Microservices')
+    })
+
+    const listWithNoBlogs = []
+    test('of an empty list is nothing', () => {
+        const result = listHelper.favoriteBlog(listWithNoBlogs)
+        console.log(result)
+        expect(result).toBe('No blogs specified')
+    })
+})
