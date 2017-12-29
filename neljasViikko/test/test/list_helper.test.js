@@ -95,3 +95,47 @@ describe('most likes', () => {
         expect(result).toBe('No blogs specified')
     })
 })
+
+describe('most blogs', () => {
+    const listWithThreeBlogs = [
+        {
+            _id: '5a422aa71b54a676234d17f1',
+            title: 'Microservices',
+            author: 'Martin Fowler',
+            url: 'https://martinfowler.com/articles/microservices.html',
+            likes: 90,
+            __v: 0
+        },
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 5,
+            __v: 0
+        },
+        {
+            _id: '5a422aa71b54a676234d17f2',
+            title: 'Dependency Injection',
+            author: 'Martin Fowler',
+            url: 'https://martinfowler.com/articles/injection.html',
+            likes: 50,
+            __v: 0
+        }
+    ]
+
+
+    test('when one has two entries from three returns the one with two', () => {
+        const result = listHelper.mostBlogs(listWithThreeBlogs)
+        expect(result.author).toBe('Martin Fowler')
+    })
+
+    const listWithNoBlogs = []
+
+    test('when no blogs have been defined is just that', () => {
+        const result = listHelper.mostBlogs(listWithNoBlogs)
+        expect(result).toBe("No blogs specified")
+    })
+
+
+})

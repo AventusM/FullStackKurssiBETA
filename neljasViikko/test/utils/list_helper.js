@@ -19,4 +19,22 @@ const favoriteBlog = (bloglist) => {
         bloglist.filter(blog => blog.likes === mostLikes)[0]
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog }
+const mostBlogs = (bloglist) => {
+    if (bloglist.length === 0) {
+        return "No blogs specified"
+    }
+    const sortedAuthors = bloglist.map(blog => blog.author).sort()
+    // console.log(sortedAuthors)
+    const blogAmounts = sortedAuthors.map(author => sortedAuthors.lastIndexOf(author) - sortedAuthors.indexOf(author) + 1)
+    // console.log(blogAmounts)
+    const maxBlogAmount = Math.max.apply(null, blogAmounts)
+    // console.log(maxBlogAmount)
+    //Indeksi suoraan verrattavissa sortedAuthors - taulukkoon.
+    const maxBlogAmountIndex = blogAmounts.indexOf(maxBlogAmount)
+    // console.log(maxBlogAmountIndex)
+    // console.log('author -> ' + sortedAuthors[maxBlogAmountIndex])
+    return { author: sortedAuthors[maxBlogAmountIndex], blogs: maxBlogAmount }
+
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
