@@ -115,6 +115,32 @@ test('empty likes field puts zero in said field', async () => {
   expect(allBlogLikes[lastIndex]).toBe(0)
 })
 
+//3. POST ilman otsikkoa palauttaa 400 - bad requestin
+test('no title returns 400 bad request', async () => {
+  const newBlogWithNoTitle = {
+    author: "Anton Moroz",
+    url: "cs.helsinki.fi/u/amoroz"
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogWithNoTitle)
+    .expect(400)
+})
+
+//4. 'tyhjä' url palauttaa 400 - bad requestin
+test('empty url returns 400 bad request', async () => {
+  const newBlogWithEmptyUrl = {
+    author: "Anton Moroz",
+    url: "   "
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogWithEmptyUrl)
+    .expect(400)
+})
+
 afterAll(() => {
   server.close()
 })

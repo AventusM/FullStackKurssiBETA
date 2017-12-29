@@ -20,6 +20,9 @@ blogsRouter.post('/', async (req, res) => {
     try {
         console.log('POST')
         const body = req.body
+        if (body.title === undefined || body.url === undefined || body.title.trim() === "" || body.url.trim() === "") {
+            return res.status(400).json({ error: 'otsikko ja/tai sivu puuttuu' })
+        }
 
         const blog = new Blog({
             title: body.title,
