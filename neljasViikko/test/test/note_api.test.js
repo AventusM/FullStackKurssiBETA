@@ -34,7 +34,7 @@ beforeAll(async () => {
   await Promise.all(promiseArray)
 })
 
-//GET-tason testit (pelkkä GET)
+//GET-tason testit (pelkkä GET, käytetään olemassaolevaa dataa)
 //1. Jokin spesifi olemassaoleva blogi näytetään listassa
 test('a specific pre-existing blog can be viewed', async () => {
   const allBlogs =
@@ -58,6 +58,36 @@ test('unknown blog does not have a known property', async () => {
       .get('/api/blogs')
   const blogAuthors = allBlogs.body.map(blog => blog.author)
   expect(blogAuthors).not.toContain('Geir Siirde')
+})
+
+//POST-tason testit (POST, lopuksi GET - tarkistus)
+//1. Yksinkertainen testi blogin lisäämiselle
+test('a valid new blog can be added', async () => {
+  const newBlog = {
+    "title": "Sample resume",
+    "author": "Anton Moroz",
+    "url": "cs.helsinki.fi/u/amoroz",
+    "likes": 1
+  }
+
+  //Suoritetaan lisäys
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+
+  //Tarkistus GET:llä
+  const allBlogs =
+    await api
+      .get('/api/blogs')
+
+  //Tarkistetaan otsikot (tässä esimerkkinä)
+  const titles = allBlogs.body.map(blog => blog.title)
+
+  //1. varmistus ---> blogeja on yksi enemmän kuin aikaisemmin
+  expect(allBlogs.body.length).toBe(initialBlogData.length + 1)
+  //2. varmistus ---> äsken lisätyn blogin sisältö on mukana
+  expect(titles).toContain('Sample resume')
+
 })
 
 afterAll(() => {

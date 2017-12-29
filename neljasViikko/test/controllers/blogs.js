@@ -5,26 +5,36 @@ const bodyParser = require('body-parser')
 blogsRouter.use(bodyParser.json())
 
 blogsRouter.get('/', async (req, res) => {
-    console.log("GET")
-    // Blog
-    //     .find({})
-    //     .then(blogs => {
-    //         console.log(blogs)
-    //         res.json(blogs)
-    //     })
-    const blogs = await Blog.find({})
-    console.log(blogs)
-    res.json(blogs)
+    try {
+        console.log("GET")
+        const blogs = await Blog.find({})
+        console.log(blogs)
+        res.json(blogs)
+    } catch (exception) {
+        console.log(exception)
+        res.status(500).json({ error: 'something went wrong' })
+    }
 })
 
-blogsRouter.post('/', (req, res) => {
-    const blog = new Blog(req.body)
-    blog
-        .save()
-        .then(result => {
-            console.log(result)
-            res.status(201).json(result)
+blogsRouter.post('/', async (req, res) => {
+    try {
+        console.log('POST')
+        const body = req.body
+
+        const blog = new Blog({
+            title: body.title,
+            author: body.author,
+            url: body.url,
+            likes: body.likes
         })
+
+        const savedBlog = await blog.save({})
+        res.json(savedBlog)
+
+    } catch (exception) {
+        console.log(exception)
+        res.status(500).json({ error: 'something went wrong' })
+    }
 })
 
 module.exports = blogsRouter
