@@ -29,8 +29,8 @@ beforeAll(async () => {
   const blogs = initialBlogData.map(blogObject => new Blog(blogObject))
   // blog.save() ---> promise - olio
   const promiseArray = blogs.map(blog => blog.save())
-  // //viimeinen rivi odottaa, että promiseArrayn toteutus valmis ennen
-  // //testeihin etenemistä
+  //viimeinen rivi odottaa, että promiseArrayn toteutus valmis ennen
+  //testeihin etenemistä
   await Promise.all(promiseArray)
 })
 
@@ -64,10 +64,10 @@ test('unknown blog does not have a known property', async () => {
 //1. Yksinkertainen testi blogin lisäämiselle
 test('a valid new blog can be added', async () => {
   const newBlog = {
-    "title": "Sample resume",
-    "author": "Anton Moroz",
-    "url": "cs.helsinki.fi/u/amoroz",
-    "likes": 1
+    title: "Sample resume",
+    author: "Anton Moroz",
+    url: "cs.helsinki.fi/u/amoroz",
+    likes: 1
   }
 
   //Suoritetaan lisäys
@@ -84,10 +84,35 @@ test('a valid new blog can be added', async () => {
   const titles = allBlogs.body.map(blog => blog.title)
 
   //1. varmistus ---> blogeja on yksi enemmän kuin aikaisemmin
+  //HUOMIO - TESTIN SIJAINTI KOODISSA SAATTAA OLLA TÄRKEÄ -> initialBlogData.length + 1 EI SKAALAUDU!!!
   expect(allBlogs.body.length).toBe(initialBlogData.length + 1)
   //2. varmistus ---> äsken lisätyn blogin sisältö on mukana
   expect(titles).toContain('Sample resume')
 
+})
+
+//2. Varmistetaan, että tyhjän 'likes' - kentän arvoksi tulee 0
+test('empty likes field puts zero in said field', async () => {
+  const newBlogWithNoLikes = {
+    title: "A programmers resume",
+    author: "Anton Moroz",
+    url: "cs.helsinki.fi/u/amoroz"
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogWithNoLikes)
+
+  const allBlogs =
+    await api
+      .get('/api/blogs')
+
+  //Haetaan lisätty blogi (viimeisin) tietokannasta ja varmistetaan 'likes' - kentän arvo
+  const allBlogLikes = allBlogs.body.map(blog => blog.likes)
+  // console.log(allBlogLikes)
+  const lastIndex = allBlogs.body.length - 1
+  // console.log(lastIndex)
+  expect(allBlogLikes[lastIndex]).toBe(0)
 })
 
 afterAll(() => {
