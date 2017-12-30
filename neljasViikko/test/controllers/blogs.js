@@ -12,7 +12,7 @@ blogsRouter.get('/', async (req, res) => {
         res.json(blogs)
     } catch (exception) {
         console.log(exception)
-        res.status(500).json({ error: 'something went wrong' })
+        res.status(400).json({ error: 'something went wrong' })
     }
 })
 
@@ -37,6 +37,16 @@ blogsRouter.post('/', async (req, res) => {
     } catch (exception) {
         console.log(exception)
         res.status(500).json({ error: 'something went wrong' })
+    }
+})
+
+blogsRouter.delete('/:id', async (req, res) => {
+    try {
+        await Blog.findByIdAndRemove(req.params.id)
+        res.status(204).send("Success").end()
+    } catch (exception) {
+        console.log(exception)
+        res.status(400).json({ error: 'something went wrong, try having a look at the id' })
     }
 })
 

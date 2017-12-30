@@ -5,7 +5,7 @@ const Blog = require('../models/blog') // Ei exportata kahdesta moduulista
 const { initialBlogData, blogsInDb } = require('./test_helper')
 
 describe('when some blogs have been saved beforehand', async () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     //Viimeinen rivi odottaa, että 
     await Blog.remove({})
     const blogs = initialBlogData.map(blogObject => new Blog(blogObject))
@@ -46,6 +46,7 @@ describe('when some blogs have been saved beforehand', async () => {
   describe('addition of a new blog', async () => {
     test('POST /api/blogs succeeds with valid input data', async () => {
       const blogsBeforeOperation = await blogsInDb()
+      console.log(blogsBeforeOperation)
       const newBlog = {
         title: "Sample resume",
         author: "Anton Moroz",
@@ -59,6 +60,7 @@ describe('when some blogs have been saved beforehand', async () => {
         .expect(200)
 
       const blogsAfterOperation = await blogsInDb()
+      console.log(blogsAfterOperation)
       //1. varmistus ---> blogeja on yksi enemmän kuin aikaisemmin
       //Nyt skaalautuva versio
       expect(blogsAfterOperation.length).toBe(blogsBeforeOperation.length + 1)
@@ -69,7 +71,7 @@ describe('when some blogs have been saved beforehand', async () => {
 
     test('POST /api/blogs fills in the "likes" - field if one is not given', async () => {
       const blogsBeforeOperation = await blogsInDb()
-      // console.log(blogsBeforeOperation)
+      console.log(blogsBeforeOperation)
       const newBlogWithNoLikes = {
         title: "A programmers resume",
         author: "Anton Moroz",
@@ -81,7 +83,7 @@ describe('when some blogs have been saved beforehand', async () => {
         .expect(200)
 
       const blogsAfterOperation = await blogsInDb()
-      // console.log(blogsAfterOperation)
+      console.log(blogsAfterOperation)
       const allBlogLikes = blogsAfterOperation.map(blog => blog.likes)
       const lastIndex = blogsBeforeOperation.length
       expect(allBlogLikes[lastIndex]).toBe(0)
