@@ -1,144 +1,124 @@
 const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
+const Blog = require('../models/blog') // Ei exportata kahdesta moduulista
+const { initialBlogData, blogsInDb } = require('./test_helper')
 
-const Blog = require('../models/blog')
+describe('when some blogs have been saved beforehand', async () => {
+  beforeAll(async () => {
+    //Viimeinen rivi odottaa, että 
+    await Blog.remove({})
+    const blogs = initialBlogData.map(blogObject => new Blog(blogObject))
+    // blog.save() ---> promise - olio
+    const promiseArray = blogs.map(blog => blog.save())
+    //viimeinen rivi odottaa, että promiseArrayn toteutus valmis ennen
+    //testeihin etenemistä
+    await Promise.all(promiseArray)
+  })
 
-const initialBlogData = [
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5,
-    __v: 0
-  },
-  {
-    _id: '5a422aa71b54a676234d17f1',
-    title: 'Russian food',
-    author: 'AntonM',
-    url: '',
-    likes: 1,
-    __v: 0
-  }
-]
+  test('a specific blog is also included by GET /api/blogs', async () => {
+    const blogsInDatabase = await blogsInDb() //return ---> ()
+    const blogByDijkstra = blogsInDatabase[0]
+    const allBlogs =
+      await api
+        .get('/api/blogs')
 
-beforeAll(async () => {
-  //Viimeinen rivi odottaa, että 
-  await Blog.remove({})
-  const blogs = initialBlogData.map(blogObject => new Blog(blogObject))
-  // blog.save() ---> promise - olio
-  const promiseArray = blogs.map(blog => blog.save())
-  //viimeinen rivi odottaa, että promiseArrayn toteutus valmis ennen
-  //testeihin etenemistä
-  await Promise.all(promiseArray)
-})
+    expect(allBlogs.body[0].author).toBe(blogByDijkstra.author)
+  })
 
-//GET-tason testit (pelkkä GET, käytetään olemassaolevaa dataa)
-//1. Jokin spesifi olemassaoleva blogi näytetään listassa
-test('a specific pre-existing blog can be viewed', async () => {
-  const allBlogs =
-    await api
-      .get('/api/blogs')
+  test('the amount of all blogs is known by GET /api/blogs', async () => {
+    const blogsInDatabase = await blogsInDb()
+    const allBlogs =
+      await api
+        .get('/api/blogs')
+    expect(allBlogs.body.length).toBe(blogsInDatabase.length)
+  })
 
-  expect(allBlogs.body[0].author).toBe('Edsger W. Dijkstra')
-})
-//2. Blogien määrä tiedetään
-test('the length of the bloglist is known', async () => {
-  const allBlogs =
-    await api
-      .get('/api/blogs')
+  //Ei muutoksia aiempaan suoritukseen
+  test('an unknown blog is not included by GET /api/blogs', async () => {
+    const allBlogs =
+      await api
+        .get('/api/blogs')
+    const blogAuthors = allBlogs.body.map(blog => blog.author)
+    expect(blogAuthors).not.toContain('Geir Siirde')
+  })
 
-  expect(allBlogs.body.length).toBe(initialBlogData.length)
-})
-//3. Blogi, jota ei ole olemassa ei voi nähdä
-test('unknown blog does not have a known property', async () => {
-  const allBlogs =
-    await api
-      .get('/api/blogs')
-  const blogAuthors = allBlogs.body.map(blog => blog.author)
-  expect(blogAuthors).not.toContain('Geir Siirde')
-})
+  describe('addition of a new blog', async () => {
+    test('POST /api/blogs succeeds with valid input data', async () => {
+      const blogsBeforeOperation = await blogsInDb()
+      const newBlog = {
+        title: "Sample resume",
+        author: "Anton Moroz",
+        url: "cs.helsinki.fi/u/amoroz",
+        likes: 1
+      }
 
-//POST-tason testit (POST, lopuksi GET - tarkistus)
-//1. Yksinkertainen testi blogin lisäämiselle
-test('a valid new blog can be added', async () => {
-  const newBlog = {
-    title: "Sample resume",
-    author: "Anton Moroz",
-    url: "cs.helsinki.fi/u/amoroz",
-    likes: 1
-  }
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
 
-  //Suoritetaan lisäys
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
+      const blogsAfterOperation = await blogsInDb()
+      //1. varmistus ---> blogeja on yksi enemmän kuin aikaisemmin
+      //Nyt skaalautuva versio
+      expect(blogsAfterOperation.length).toBe(blogsBeforeOperation.length + 1)
+      const titles = blogsAfterOperation.map(blog => blog.title)
+      //2. varmistus ---> äsken lisätyn blogin sisältö on mukana
+      expect(titles).toContain("Sample resume")
+    })
 
-  //Tarkistus GET:llä
-  const allBlogs =
-    await api
-      .get('/api/blogs')
+    test('POST /api/blogs fills in the "likes" - field if one is not given', async () => {
+      const blogsBeforeOperation = await blogsInDb()
+      // console.log(blogsBeforeOperation)
+      const newBlogWithNoLikes = {
+        title: "A programmers resume",
+        author: "Anton Moroz",
+        url: "cs.helsinki.fi/u/amoroz"
+      }
+      await api
+        .post('/api/blogs')
+        .send(newBlogWithNoLikes)
 
-  //Tarkistetaan otsikot (tässä esimerkkinä)
-  const titles = allBlogs.body.map(blog => blog.title)
+      const blogsAfterOperation = await blogsInDb()
+      // console.log(blogsAfterOperation)
+      const allBlogLikes = blogsAfterOperation.map(blog => blog.likes)
+      const lastIndex = blogsBeforeOperation.length
+      expect(allBlogLikes[lastIndex]).toBe(0)
 
-  //1. varmistus ---> blogeja on yksi enemmän kuin aikaisemmin
-  //HUOMIO - TESTIN SIJAINTI KOODISSA SAATTAA OLLA TÄRKEÄ -> initialBlogData.length + 1 EI SKAALAUDU!!!
-  expect(allBlogs.body.length).toBe(initialBlogData.length + 1)
-  //2. varmistus ---> äsken lisätyn blogin sisältö on mukana
-  expect(titles).toContain('Sample resume')
+    })
+    test('POST /api/blogs fails with improper title input', async () => {
+      const newBlogWithNoTitle = {
+        author: "Anton Moroz",
+        url: "cs.helsinki.fi/u/amoroz"
+      }
+      const blogsBeforeOperation = await blogsInDb()
 
-})
+      await api
+        .post('/api/blogs')
+        .send(newBlogWithNoTitle)
+        .expect(400)
 
-//2. Varmistetaan, että tyhjän 'likes' - kentän arvoksi tulee 0
-test('empty likes field puts zero in said field', async () => {
-  const newBlogWithNoLikes = {
-    title: "A programmers resume",
-    author: "Anton Moroz",
-    url: "cs.helsinki.fi/u/amoroz"
-  }
+      const blogsAfterOperation = await blogsInDb()
+      expect(blogsAfterOperation.length).toBe(blogsBeforeOperation.length)
+    })
+    test('POST /api/blogs fails with improper url input', async () => {
+      const newBlogWithEmptyUrl = {
+        author: "Anton Moroz",
+        url: "   "
+      }
+      const blogsBeforeOperation = await blogsInDb()
+      // console.log(blogsBeforeOperation)
 
-  await api
-    .post('/api/blogs')
-    .send(newBlogWithNoLikes)
+      await api
+        .post('/api/blogs')
+        .send(newBlogWithEmptyUrl)
+        .expect(400)
 
-  const allBlogs =
-    await api
-      .get('/api/blogs')
+      const blogsAfterOperation = await blogsInDb()
+      // console.log(blogsAfterOperation)
+      expect(blogsAfterOperation.length).toBe(blogsBeforeOperation.length)
+    })
+  })
 
-  //Haetaan lisätty blogi (viimeisin) tietokannasta ja varmistetaan 'likes' - kentän arvo
-  const allBlogLikes = allBlogs.body.map(blog => blog.likes)
-  // console.log(allBlogLikes)
-  const lastIndex = allBlogs.body.length - 1
-  // console.log(lastIndex)
-  expect(allBlogLikes[lastIndex]).toBe(0)
-})
-
-//3. POST ilman otsikkoa palauttaa 400 - bad requestin
-test('no title returns 400 bad request', async () => {
-  const newBlogWithNoTitle = {
-    author: "Anton Moroz",
-    url: "cs.helsinki.fi/u/amoroz"
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlogWithNoTitle)
-    .expect(400)
-})
-
-//4. 'tyhjä' url palauttaa 400 - bad requestin
-test('empty url returns 400 bad request', async () => {
-  const newBlogWithEmptyUrl = {
-    author: "Anton Moroz",
-    url: "   "
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlogWithEmptyUrl)
-    .expect(400)
 })
 
 afterAll(() => {
