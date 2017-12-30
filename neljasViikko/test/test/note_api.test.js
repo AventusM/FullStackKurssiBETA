@@ -56,6 +56,7 @@ describe('when some blogs have been saved beforehand', async () => {
       await api
         .post('/api/blogs')
         .send(newBlog)
+        .expect(200)
 
       const blogsAfterOperation = await blogsInDb()
       //1. varmistus ---> blogeja on yksi enemmän kuin aikaisemmin
@@ -77,6 +78,7 @@ describe('when some blogs have been saved beforehand', async () => {
       await api
         .post('/api/blogs')
         .send(newBlogWithNoLikes)
+        .expect(200)
 
       const blogsAfterOperation = await blogsInDb()
       // console.log(blogsAfterOperation)
@@ -117,6 +119,34 @@ describe('when some blogs have been saved beforehand', async () => {
       // console.log(blogsAfterOperation)
       expect(blogsAfterOperation.length).toBe(blogsBeforeOperation.length)
     })
+  })
+
+  describe('deletion of a blog', async () => {
+    //muuttuja
+    let newBlog
+
+    beforeAll(async () => {
+      newBlog = new Blog({
+        title: "Soppakulho",
+        author: "Anton Moroz",
+        url: "cs.helsinki.fi/u/amoroz"
+      })
+      await newBlog.save()
+    })
+
+    test('DELETE /api/blogs/:id succeeds with proper input', async () => {
+      const blogsBeforeDeletion = await blogsInDb()
+      await api
+        .delete(`/api/blogs/${newBlog._id}`)
+        .expect(204)
+
+      const blogsAfterDeletion = await blogsInDb()
+      const titles = blogsAfterDeletion.map(blog => blog.title)
+      expect(titles).not.toContain(newBlog.title)
+      expect(blogsAfterDeletion.length).toBe(blogsBeforeDeletion.length)
+
+    })
+
   })
 
 })
