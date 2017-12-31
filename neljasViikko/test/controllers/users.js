@@ -11,13 +11,20 @@ const formatUser = (inputUser) => {
     id: inputUser.id,
     username: inputUser.username,
     name: inputUser.name,
-    adult: inputUser.adult
+    adult: inputUser.adult,
+    blogs: inputUser.blogs
   }
 }
 
 usersRouter.get('/', async (req, res) => {
   try {
-    const users = await User.find({})
+    //blogs - kentässä id:n sijasta varsinainen sisältö
+    //Filtteröidään __V ja user (duplikaatti, huomataan siitä kuitenkin yhteys) pois
+    //Vastaavasti voi laittaa 1 juuri siihen kenttään mikä halutaan nähdä
+    //näin tehty blogsRouterissa
+    //ref --> blog ===> mongoose tietää mitä populate tekee
+    //halutaan 'populoida' blogs - kenttä
+    const users = await User.find({}).populate('blogs', { __v: 0, user: 0 })
     res.json(users.map(formatUser))
   } catch (exception) {
     console.log(exception)

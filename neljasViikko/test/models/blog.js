@@ -3,8 +3,13 @@ const mongoose = require('mongoose')
 const Blog = mongoose.model('Blog', {
     title: String,
     author: String,
-    web: String,
-    likes: Number
+    url: String,
+    likes: Number,
+    //Jokaisella blogilla yksi lisääjä
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
 })
 
 module.exports = Blog

@@ -4,7 +4,14 @@ const User = mongoose.model('User', {
   username: String,
   name: String,
   pw: String,
-  adult: Boolean
+  adult: Boolean,
+  //Jokaisella käyttäjällä henkilökohtainen blogitaulukko
+  blogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ]
 })
 
 module.exports = User

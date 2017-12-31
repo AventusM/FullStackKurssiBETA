@@ -181,7 +181,7 @@ describe('when some blogs have been saved beforehand', async () => {
 
 })
 
-describe.only('when a single user is in the database', async () => {
+describe('when a single user is in the database', async () => {
 
   beforeEach(async () => {
     //Tyhjennetään käyttäjät tietokannasta ennen jokaista yksittäistä testiä
@@ -189,15 +189,17 @@ describe.only('when a single user is in the database', async () => {
     const user = new User({
       username: "AntonM",
       name: "Anton",
-      pw: "secret"
+      pw: "secret",
+      adult: true
     })
     //Talletetaan yksi käyttäjä tulevia duplikaattitestejä varten
     //Validi syöte
     await user.save()
   })
 
-  test('POST /api/users succeeds with unique username', async () => {
+  test('POST /api/users succeeds with unique username and empty adult value', async () => {
     const usersBeforeAddition = await usersInDb()
+    console.log(usersBeforeAddition[0])
 
     const userToBeAdded = {
       username: "Whiteknight108",
@@ -215,6 +217,8 @@ describe.only('when a single user is in the database', async () => {
     //Varmistetaan, että uusi käyttäjänimi löytyy kaikkien käyttäjänimien joukosta
     const allUsernames = usersAfterAddition.map(user => user.username)
     expect(allUsernames).toContain(userToBeAdded.username)
+    //Tarkistetaan, että ilman adult - kenttää asetettu käyttäjä saa oletusarvokseen true
+    expect(usersAfterAddition[usersBeforeAddition.length].adult).toBe(true)
   })
 
   test('POST /api/users fails with a duplicate username', async () => {
@@ -262,7 +266,7 @@ describe.only('when a single user is in the database', async () => {
       .post('/api/users')
       .send(tooShortPasswordToBeAdded)
       .expect(400)
-      
+
     expect(result.body).toEqual({ error: 'username and/or password too short' })
   })
 })
