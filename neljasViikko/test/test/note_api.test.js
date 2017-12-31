@@ -4,7 +4,8 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog') // Ei exportata kahdesta moduulista
-const { initialBlogData, blogsInDb } = require('./test_helper')
+const User = require('../models/user')
+const { initialBlogData, blogsInDb, usersInDb } = require('./test_helper')
 
 describe('when some blogs have been saved beforehand', async () => {
   beforeEach(async () => {
@@ -155,29 +156,115 @@ describe('when some blogs have been saved beforehand', async () => {
 
   //1. Edit w/proper input
   //2. id not accepted
-  describe('altering blogs contents', async () => {
+  // describe('altering blogs contents', async () => {
 
-    test('PUT /api/blogs/:id can update likes of an existing blog', async () => {
-      const blogsBeforeUpdate = await blogsInDb()
-      //new Blog ei käy ---> tulee uusi, erillinen id
-      const firstBlog = blogsBeforeUpdate[0]
-      let currentLikes = firstBlog.likes
-      console.log('CURRENT LIKES ---> ' + currentLikes)
+  //   test('PUT /api/blogs/:id can update likes of an existing blog', async () => {
+  //     const blogsBeforeUpdate = await blogsInDb()
+  //     //new Blog ei käy ---> tulee uusi, erillinen id
+  //     const firstBlog = blogsBeforeUpdate[0]
+  //     let currentLikes = firstBlog.likes
+  //     console.log('CURRENT LIKES ---> ' + currentLikes)
 
-      firstBlog.likes += 1
-      await firstBlog.update()
+  //     firstBlog.likes += 1
+  //     await firstBlog.update()
 
-      await api
-        .put(`/api/blogs/${firstBlog._id}`)
-        .send(firstBlog)
+  //     await api
+  //       .put(`/api/blogs/${firstBlog._id}`)
+  //       .send(firstBlog)
 
-      const blogsAfterUpdate = await blogsInDb()
-      console.log(blogsAfterUpdate[0].likes)
+  //     const blogsAfterUpdate = await blogsInDb()
+  //     console.log(blogsAfterUpdate[0].likes)
 
-      expect(blogsAfterUpdate[0].likes).toBe(currentLikes + 1)
+  //     expect(blogsAfterUpdate[0].likes).toBe(currentLikes + 1)
+  //   })
+  // })
+
+})
+
+describe.only('when a single user is in the database', async () => {
+
+  beforeEach(async () => {
+    //Tyhjennetään käyttäjät tietokannasta ennen jokaista yksittäistä testiä
+    await User.remove({})
+    const user = new User({
+      username: "AntonM",
+      name: "Anton",
+      pw: "secret"
     })
+    //Talletetaan yksi käyttäjä tulevia duplikaattitestejä varten
+    //Validi syöte
+    await user.save()
   })
 
+  test('POST /api/users succeeds with unique username', async () => {
+    const usersBeforeAddition = await usersInDb()
+
+    const userToBeAdded = {
+      username: "Whiteknight108",
+      name: "Matti Sormunen",
+      pw: "worth"
+    }
+
+    await api
+      .post('/api/users')
+      .send(userToBeAdded)
+
+    const usersAfterAddition = await usersInDb()
+    //Varmistus, että käyttäjiä on 1 enemmän kuin ennen lisäysoperaatiota
+    expect(usersAfterAddition.length).toBe(usersBeforeAddition.length + 1)
+    //Varmistetaan, että uusi käyttäjänimi löytyy kaikkien käyttäjänimien joukosta
+    const allUsernames = usersAfterAddition.map(user => user.username)
+    expect(allUsernames).toContain(userToBeAdded.username)
+  })
+
+  test('POST /api/users fails with a duplicate username', async () => {
+
+    const duplicateToBeAdded = {
+      username: "AntonM",
+      name: "Petteri Punakuono",
+      pw: "publicknowledge"
+    }
+
+    //Käytetään tulosta hyödyksi testissä
+    //Käytetään tulosta hyödyksi testissä
+    const result = await api
+      .post('/api/users')
+      .send(duplicateToBeAdded)
+      .expect(409)
+
+    expect(result.body).toEqual({ error: 'duplicate username found' })
+
+  })
+
+  test('POST /api/users fails with too short of a username', async () => {
+    const tooShortUserNameToBeAdded = {
+      username: "ab",
+      name: "Peter Rednose",
+      pw: "creativecommons"
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(tooShortUserNameToBeAdded)
+      .expect(400)
+
+    expect(result.body).toEqual({ error: 'username and/or password too short' })
+  })
+
+  test('POST /api/users fails with too short of a password', async () => {
+    const tooShortPasswordToBeAdded = {
+      username: "abc",
+      name: "mr.perfect",
+      pw: "xd"
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(tooShortPasswordToBeAdded)
+      .expect(400)
+      
+    expect(result.body).toEqual({ error: 'username and/or password too short' })
+  })
 })
 
 afterAll(() => {

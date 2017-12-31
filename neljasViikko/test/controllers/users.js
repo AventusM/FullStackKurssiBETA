@@ -5,6 +5,7 @@ const usersRouter = express.Router()
 const bodyParser = require('body-parser')
 usersRouter.use(bodyParser.json())
 
+//ERITYISESTI GET - OPERAATIOTA VARTEN
 const formatUser = (inputUser) => {
   return {
     id: inputUser.id,
@@ -29,6 +30,15 @@ usersRouter.get('/', async (req, res) => {
 usersRouter.post('/', async (req, res) => {
   try {
     const body = req.body
+    console.log('attempt ---> user: ' + body.username + ' --- pw: ' + body.pw)
+
+    const duplicate = await User.find({ username: body.username })
+    if (duplicate.length > 0) {
+      return res.status(409).json({ error: 'duplicate username found' })
+    } else if (body.username.length < 3 || body.pw.length < 3) {
+      return res.status(400).json({ error: 'username and/or password too short' })
+    }
+    console.log('success')
     const saltRounds = 10
     const pwdHash = await bcrypt.hash(body.pw, saltRounds)
 
@@ -37,7 +47,7 @@ usersRouter.post('/', async (req, res) => {
       username: body.username,
       name: body.name,
       pwdHash,
-      adult: body.adult
+      adult: body.adult || true
     })
 
     const savedUser = await newUser.save()
