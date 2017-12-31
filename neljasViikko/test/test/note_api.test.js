@@ -1,4 +1,6 @@
 const supertest = require('supertest')
+//Export indeksistä
+//mockaamisen sijasta (käytössä oikea tietokanta)
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog') // Ei exportata kahdesta moduulista
@@ -18,12 +20,12 @@ describe('when some blogs have been saved beforehand', async () => {
 
   test('a specific blog is also included by GET /api/blogs', async () => {
     const blogsInDatabase = await blogsInDb() //return ---> ()
-    const blogByDijkstra = blogsInDatabase[0]
+    const firstBlog = blogsInDatabase[0]
     const allBlogs =
       await api
         .get('/api/blogs')
 
-    expect(allBlogs.body[0].author).toBe(blogByDijkstra.author)
+    expect(allBlogs.body[0].author).toBe(firstBlog.author)
   })
 
   test('the amount of all blogs is known by GET /api/blogs', async () => {
@@ -149,6 +151,31 @@ describe('when some blogs have been saved beforehand', async () => {
 
     })
 
+  })
+
+  //1. Edit w/proper input
+  //2. id not accepted
+  describe('altering blogs contents', async () => {
+
+    test('PUT /api/blogs/:id can update likes of an existing blog', async () => {
+      const blogsBeforeUpdate = await blogsInDb()
+      //new Blog ei käy ---> tulee uusi, erillinen id
+      const firstBlog = blogsBeforeUpdate[0]
+      let currentLikes = firstBlog.likes
+      console.log('CURRENT LIKES ---> ' + currentLikes)
+
+      firstBlog.likes += 1
+      await firstBlog.update()
+
+      await api
+        .put(`/api/blogs/${firstBlog._id}`)
+        .send(firstBlog)
+
+      const blogsAfterUpdate = await blogsInDb()
+      console.log(blogsAfterUpdate[0].likes)
+
+      expect(blogsAfterUpdate[0].likes).toBe(currentLikes + 1)
+    })
   })
 
 })

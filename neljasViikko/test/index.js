@@ -5,9 +5,14 @@ const mongoose = require('mongoose')
 
 const app = express()
 const Blog = require('./models/blog')
-const blogsRouter = require('./controllers/blogs')
 const config = require('./utils/config')
+const User = require('./models/user')
 
+
+const usersRouter = require('./controllers/users')
+app.use('/api/users', usersRouter)
+
+const blogsRouter = require('./controllers/blogs')
 app.use('/api/blogs', blogsRouter)
 app.use(cors())
 

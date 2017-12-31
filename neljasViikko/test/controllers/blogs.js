@@ -6,9 +6,8 @@ blogsRouter.use(bodyParser.json())
 
 blogsRouter.get('/', async (req, res) => {
     try {
-        console.log("GET")
+        console.log('GET')
         const blogs = await Blog.find({})
-        console.log(blogs)
         res.json(blogs)
     } catch (exception) {
         console.log(exception)
@@ -23,7 +22,6 @@ blogsRouter.post('/', async (req, res) => {
         if (body.title === undefined || body.url === undefined || body.title.trim() === "" || body.url.trim() === "") {
             return res.status(400).json({ error: 'otsikko ja/tai url puuttuu' })
         }
-
         const blog = new Blog({
             title: body.title,
             author: body.author,
@@ -44,6 +42,35 @@ blogsRouter.delete('/:id', async (req, res) => {
     try {
         await Blog.findByIdAndRemove(req.params.id)
         res.status(204).send("Success").end()
+    } catch (exception) {
+        console.log(exception)
+        res.status(400).json({ error: 'something went wrong, try having a look at the id' })
+    }
+})
+
+blogsRouter.put('/:id', async (req, res) => {
+    try {
+        console.log('PUT')
+        const body = req.body
+
+        const blog = new Blog({
+            title: body.title,
+            author: body.author,
+            url: body.url,
+            likes: body.likes
+        })
+
+        //Miten piilotetaan id pois päivityksestä?
+        const updatedBlog = await Blog.findByIdAndRemove(req.params.id, { $set: { likes: body.likes } }, { new: true },
+            function (err, result) {
+                try {
+                    res.send(result)
+                } catch (exception) {
+                    res.send(exception)
+                }
+            })
+        // const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true, id_: 0 })
+        res.json(updatedBlog)
     } catch (exception) {
         console.log(exception)
         res.status(400).json({ error: 'something went wrong, try having a look at the id' })
