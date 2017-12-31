@@ -158,26 +158,26 @@ describe('when some blogs have been saved beforehand', async () => {
   //2. id not accepted
   // describe('altering blogs contents', async () => {
 
-  //   test('PUT /api/blogs/:id can update likes of an existing blog', async () => {
-  //     const blogsBeforeUpdate = await blogsInDb()
-  //     //new Blog ei käy ---> tulee uusi, erillinen id
-  //     const firstBlog = blogsBeforeUpdate[0]
-  //     let currentLikes = firstBlog.likes
-  //     console.log('CURRENT LIKES ---> ' + currentLikes)
+  test('PUT /api/blogs/:id can update likes of an existing blog', async () => {
+    const blogsBeforeUpdate = await blogsInDb()
+    //new Blog ei käy ---> tulee uusi, erillinen id
+    const firstBlog = blogsBeforeUpdate[0]
+    let currentLikes = firstBlog.likes
+    console.log('CURRENT LIKES ---> ' + currentLikes)
 
-  //     firstBlog.likes += 1
-  //     await firstBlog.update()
+    firstBlog.likes += 1
+    await firstBlog.update()
 
-  //     await api
-  //       .put(`/api/blogs/${firstBlog._id}`)
-  //       .send(firstBlog)
+    await api
+      .put(`/api/blogs/${firstBlog._id}`)
+      .send(firstBlog)
 
-  //     const blogsAfterUpdate = await blogsInDb()
-  //     console.log(blogsAfterUpdate[0].likes)
+    const blogsAfterUpdate = await blogsInDb()
+    console.log(blogsAfterUpdate[0].likes)
 
-  //     expect(blogsAfterUpdate[0].likes).toBe(currentLikes + 1)
-  //   })
-  // })
+    expect(blogsAfterUpdate[0].likes).toBe(currentLikes + 1)
+  })
+
 
 })
 

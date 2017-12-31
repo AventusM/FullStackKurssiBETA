@@ -83,23 +83,16 @@ blogsRouter.put('/:id', async (req, res) => {
         console.log('PUT')
         const body = req.body
 
-        const blog = new Blog({
-            title: body.title,
-            author: body.author,
-            url: body.url,
-            likes: body.likes
-        })
+        // Toistaiseksi turha
+        // const blog = new Blog({
+        //     title: body.title,
+        //     author: body.author,
+        //     url: body.url,
+        //     likes: body.likes
+        // })
 
-        //Miten piilotetaan id pois päivityksestä?
-        const updatedBlog = await Blog.findByIdAndRemove(req.params.id, { $set: { likes: body.likes } }, { new: true },
-            function (err, result) {
-                try {
-                    res.send(result)
-                } catch (exception) {
-                    res.send(exception)
-                }
-            })
-        // const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true, id_: 0 })
+        //Error [ERR_UNHANDLED_ERROR]: Unhandled error. (TypeError: callback.apply is not a function)
+        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, { $set: { likes: body.likes } }, { new: true }, function (err, result) { })
         res.json(updatedBlog)
     } catch (exception) {
         console.log(exception)
