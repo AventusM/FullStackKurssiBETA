@@ -1,17 +1,26 @@
+const tokenExtractor = (request) => {
+  const auth = request.get('authorization')
+  if (auth && auth.toLowerCase().startsWith('bearer ')) {
+    return auth.substring(7)
+  }
+  return null
+}
+
+
 const logger = (request, response, next) => {
-    console.log('Method:', request.method)
-    console.log('Path:  ', request.path)
-    console.log('Body:  ', request.body)
-    console.log('---')
-    next()
-  }
-  
-  const error = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
-  }
-  
-  module.exports = {
-    logger,
-    error
-  }
-  
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+const error = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+module.exports = {
+  tokenExtractor,
+  logger,
+  error
+}

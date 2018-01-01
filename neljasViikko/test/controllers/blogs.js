@@ -8,14 +8,14 @@ blogsRouter.use(bodyParser.json())
 const User = require('../models/user')
 
 //Muistiinpanoja voi luoda vain kirjautunut käyttäjä
-const getTokenFrom = (req) => {
-    //Header
-    const auth = req.get('authorization')
-    if (auth && auth.toLowerCase().startsWith('bearer ')) {
-        return auth.substring(7)
-    }
-    return null
-}
+// const getTokenFrom = (req) => {
+//     //Header
+//     const auth = req.get('authorization')
+//     if (auth && auth.toLowerCase().startsWith('bearer ')) {
+//         return auth.substring(7)
+//     }
+//     return null
+// }
 
 //Vastaavanlainen kuin käyttäjillä. Tätä kautta saadaan tietoa
 //olemassaolevista lisääjistä
@@ -45,10 +45,11 @@ blogsRouter.post('/', async (req, res) => {
     console.log('POST')
     const body = req.body
     try {
-        const token = getTokenFrom(req)
+        // const token = getTokenFrom(req)
         //Käyttäjän id
-        const decodedToken = jsonWebToken.verify(token, process.env.SECRET)
-        if (!token || !decodedToken.id) {
+        //request.token ----> oma middleware käytössä (tokenExtractor)
+        const decodedToken = jsonWebToken.verify(req.token, process.env.SECRET)
+        if (!req.token || !decodedToken.id) {
             return res.status(401).json({ error: 'token missing or invalid token' })
         }
 
