@@ -22,3 +22,9 @@ sovelluskohde tai mahdollisuus osa-aikatyöhön, jotta asiat pysyisivät muistis
 30.12-31.12 -> Jääty pahasti jumiin blogilistan päivitysmetodin kanssa. Tauriaisen Juha auttoi hienosti, mutta en vielä ymmärtänyt asiasta kovinkaan paljoa. Materiaali muuttunut hankalaksi, yritän ymmärtää sen mahdollisimman hyvin, mutta tulee kyllä varsin auttamaton fiilis materiaalia luetessa. Noh kunhan tehtävävaatimukset saavutetaan, niin kai tästäkin suorituksesta saa jotain irti. Materiaalia on todella paljon ja tiiviisti. Ne jotka saa tästä eniten irti on varmaankin ne, joilla on aiempaa kokemusta näistä asioista ja haluavat täydentää tietoja. Tehtäviä tehty taas muutama kirjautumisominaisuuteen asti. (4h+ aikaa käytetty tehtäviin päivän aikana)  
 
 31.12-1.1 -> Taas kerran suht. vaikea päivä. Tarpeellisten ominaisuuksien osalta osa on valmis. Viimeisen tehtävän testin idea ei halua avautua. Osassa oli todella paljon uusia asioita ja se haittasi mielenkiintoani juuri tähän osaan paljon. 17/20 ei ole ehkä ihan se mihin haluaisin tyytyä, mutta pakko on edettävä jo ihan kurssin mielenkiinnon ylläpitämiseksi. Back-to-back back-end vie yhtä paljon mehuja pois kuin lätkätiimien vastaava. Vaikein osa so far (3h käytetty aikaa tehtävien tekoon tänään)  
+
+#TOTAL  
+OSA 1 - 7h  
+OSA 2 - 12h+  
+OSA 3 - 12h  
+OSA 4 - 17h+
