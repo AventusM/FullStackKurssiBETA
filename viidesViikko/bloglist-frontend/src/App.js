@@ -3,6 +3,39 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const BlogForm = (props) => {
+  const { titleFieldValue, authorFieldValue, urlFieldValue, blogFormSubmitFunction, blogFormChangeFunction } = props
+  return (
+    <form onSubmit={blogFormSubmitFunction}>
+      <div>
+        title
+              <input
+          type="text"
+          name="title"
+          value={titleFieldValue}
+          onChange={blogFormChangeFunction} />
+      </div>
+      <div>
+        author
+              <input
+          type="text"
+          name="author"
+          value={authorFieldValue}
+          onChange={blogFormChangeFunction} />
+      </div>
+      <div>
+        url
+              <input
+          type="text"
+          name="url"
+          value={urlFieldValue}
+          onChange={blogFormChangeFunction} />
+      </div>
+      <button>create</button>
+    </form>
+  )
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -14,7 +47,13 @@ class App extends React.Component {
       username: '',
       pw: '',
       error: null,
-      user: null
+      user: null,
+
+      //Kuinka käyttäisin näitä propseja
+      //Blog.js - tiedostosta?
+      title: '',
+      author: '',
+      url: ''
     }
   }
 
@@ -29,6 +68,7 @@ class App extends React.Component {
       //Tehdään JSON - muotoisesta stringistä objekti
       const acceptedUser = JSON.parse(loggedInUserJSON)
       this.setState({ user: acceptedUser })
+      blogService.setToken(acceptedUser.signedToken)
     }
   }
 
@@ -44,7 +84,9 @@ class App extends React.Component {
       })
 
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-      //Reset painalluksen jälkeen (user : user) ---> käytetään parempaa tapaa suoraan
+      blogService.setToken(user.signedToken) // Käyttäjä voi lisätä uusia blogeja tokenin avulla
+      //Token alla
+      // console.log(user.signedToken)
       this.setState({ username: '', pw: '', user })
     } catch (exception) {
       this.setState({
@@ -57,7 +99,6 @@ class App extends React.Component {
     }
   }
 
-  //Uloskirjautuminen, poistetaan 
   logout = async (event) => {
     event.preventDefault()
     try {
@@ -72,6 +113,35 @@ class App extends React.Component {
   // HUOM EI ASYNC
   handleLoginFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
+  }
+
+  //Käytännössä täysin turha duplikaatti
+  handleNewBlogChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value })
+  }
+
+  addBlog = async (event) => {
+    event.preventDefault()
+    try {
+      const blogObject = {
+        title: this.state.title,
+        author: this.state.author,
+        url: this.state.url
+      }
+
+      blogService.createBlog(blogObject)
+        .then(newBlog => {
+          this.setState({
+            blogs: this.state.blogs.concat(newBlog),
+            title: '',
+            author: '',
+            url: ''
+          })
+        })
+
+    } catch (exception) {
+      console.log(exception)
+    }
   }
 
   render() {
@@ -108,7 +178,16 @@ class App extends React.Component {
           {this.state.user.name} logged in
           <button onClick={this.logout}>logout</button>
         </div>
-        <br />
+        <div>
+          <h2>create new</h2>
+          <BlogForm
+            titleFieldValue={this.state.title}
+            authorFieldValue={this.state.author}
+            urlFieldValue={this.state.url}
+            blogFormChangeFunction={this.handleNewBlogChange}
+            blogFormSubmitFunction={this.addBlog}
+          />
+        </div>
         {this.state.blogs.map(blog =>
           <Blog key={blog._id} blog={blog} />
         )}
