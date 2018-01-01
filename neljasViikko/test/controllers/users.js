@@ -10,6 +10,7 @@ const formatUser = (inputUser) => {
   return {
     id: inputUser.id,
     username: inputUser.username,
+    pw: inputUser.pw,
     name: inputUser.name,
     adult: inputUser.adult,
     blogs: inputUser.blogs,
