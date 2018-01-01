@@ -4,6 +4,7 @@ const User = mongoose.model('User', {
   username: String,
   name: String,
   pw: String,
+  pwdHash: String,
   adult: Boolean,
   //Jokaisella käyttäjällä henkilökohtainen blogitaulukko
   blogs: [

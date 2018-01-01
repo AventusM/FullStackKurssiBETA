@@ -8,14 +8,14 @@ blogsRouter.use(bodyParser.json())
 const User = require('../models/user')
 
 //Muistiinpanoja voi luoda vain kirjautunut käyttäjä
-// const getTokenFrom = (req) => {
-//     //Header
-//     const auth = req.get('authorization')
-//     if (auth && auth.toLowerCase().startsWith('bearer ')) {
-//         return auth.substring(7)
-//     }
-//     return null
-// }
+const getTokenFrom = (req) => {
+    //Header
+    const auth = req.get('authorization')
+    if (auth && auth.toLowerCase().startsWith('bearer ')) {
+        return auth.substring(7)
+    }
+    return null
+}
 
 //Vastaavanlainen kuin käyttäjillä. Tätä kautta saadaan tietoa
 //olemassaolevista lisääjistä
@@ -45,11 +45,11 @@ blogsRouter.post('/', async (req, res) => {
     console.log('POST')
     const body = req.body
     try {
-        // const token = getTokenFrom(req)
+        const token = getTokenFrom(req)
         //Käyttäjän id
         //request.token ----> oma middleware käytössä (tokenExtractor)
-        const decodedToken = jsonWebToken.verify(req.token, process.env.SECRET)
-        if (!req.token || !decodedToken.id) {
+        const decodedToken = jsonWebToken.verify(token, process.env.SECRET)
+        if (!token || !decodedToken.id) {
             return res.status(401).json({ error: 'token missing or invalid token' })
         }
 
@@ -81,8 +81,6 @@ blogsRouter.post('/', async (req, res) => {
         //Tallennetaan muutos
         await foundUser.save()
 
-
-        //formatBlog myöhemmin
         res.status(200).json(formatBlog(savedBlog))
 
     } catch (exception) {
@@ -97,8 +95,22 @@ blogsRouter.post('/', async (req, res) => {
 
 blogsRouter.delete('/:id', async (req, res) => {
     try {
-        await Blog.findByIdAndRemove(req.params.id)
-        res.status(204).send("Success").end()
+        console.log('DELETE')
+        const blog = await Blog.findById(req.params.id)
+
+        const token = getTokenFrom(req)
+        const decodedToken = jsonWebToken.verify(token, process.env.SECRET)
+        if (!token || !decodedToken.id) {
+            return res.status(401).json({ error: 'token missing or invalid token' })
+        }
+
+        console.log('lisääjän id - ' + blog.user.toString())
+        console.log('token id - ' + decodedToken.id)
+        if (blog.user.toString() === decodedToken.id) {
+            await blog.remove()
+            return res.status(204).send("Success").end()
+        }
+        return res.status(403).send("Dont try to remove someone elses items")
     } catch (exception) {
         console.log(exception)
         res.status(400).json({ error: 'something went wrong, try having a look at the id' })

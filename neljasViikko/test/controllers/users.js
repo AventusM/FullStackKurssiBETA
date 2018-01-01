@@ -13,10 +13,6 @@ const formatUser = (inputUser) => {
     name: inputUser.name,
     adult: inputUser.adult,
     blogs: inputUser.blogs,
-    //SALASANA LOGININ TESTAAMISEEN
-    //SALASANA LOGININ TESTAAMISEEN
-    //SALASANA LOGININ TESTAAMISEEN
-    pw: inputUser.pw
   }
 }
 
@@ -58,8 +54,8 @@ usersRouter.post('/', async (req, res) => {
     const newUser = new User({
       username: body.username,
       name: body.name,
-      //Luukkainen unohtanut kentän vissiin
-      pw: pwdHash,
+      pw: body.pw,
+      pwdHash,
       adult: body.adult || true
     })
 
