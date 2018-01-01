@@ -22,6 +22,14 @@ class App extends React.Component {
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
     )
+    //Tarkistetaan kirjautuneen käyttäjän tilanne. Muuten user saa arvokseen
+    //aina null sivun uudelleenlatauksen yhteydessä
+    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
+    if (loggedInUserJSON) {
+      //Tehdään JSON - muotoisesta stringistä objekti
+      const acceptedUser = JSON.parse(loggedInUserJSON)
+      this.setState({ user: acceptedUser })
+    }
   }
 
   //Konsoliin tiedot kirjautumistilanteesta
@@ -35,9 +43,9 @@ class App extends React.Component {
         pw: this.state.pw
       })
 
+      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       //Reset painalluksen jälkeen (user : user) ---> käytetään parempaa tapaa suoraan
       this.setState({ username: '', pw: '', user })
-      console.log(this.state.user)
     } catch (exception) {
       this.setState({
         error: 'virheellinen käyttäjätunnus tai salasana'
@@ -48,6 +56,18 @@ class App extends React.Component {
       }, 5000)
     }
   }
+
+  //Uloskirjautuminen, poistetaan 
+  logout = async (event) => {
+    event.preventDefault()
+    try {
+      window.localStorage.removeItem('loggedInUser')
+      this.setState({ user: null })
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
   //Muutos -> ei iffejä, ei duplikaatteja
   // HUOM EI ASYNC
   handleLoginFieldChange = (event) => {
@@ -70,7 +90,7 @@ class App extends React.Component {
             </div>
             <div>password
               <input
-                text="password"
+                type="password"
                 name="pw" //TÄRKEÄ IFFIHÄSSÄKÄN POISTAMISEKSI
                 value={this.state.pw}
                 onChange={this.handleLoginFieldChange} />
@@ -84,6 +104,11 @@ class App extends React.Component {
     return (
       <div>
         <h2>blogs</h2>
+        <div>
+          {this.state.user.name} logged in
+          <button onClick={this.logout}>logout</button>
+        </div>
+        <br />
         {this.state.blogs.map(blog =>
           <Blog key={blog._id} blog={blog} />
         )}
