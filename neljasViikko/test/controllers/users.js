@@ -12,7 +12,11 @@ const formatUser = (inputUser) => {
     username: inputUser.username,
     name: inputUser.name,
     adult: inputUser.adult,
-    blogs: inputUser.blogs
+    blogs: inputUser.blogs,
+    //SALASANA LOGININ TESTAAMISEEN
+    //SALASANA LOGININ TESTAAMISEEN
+    //SALASANA LOGININ TESTAAMISEEN
+    pw: inputUser.pw
   }
 }
 
@@ -48,12 +52,14 @@ usersRouter.post('/', async (req, res) => {
     console.log('success')
     const saltRounds = 10
     const pwdHash = await bcrypt.hash(body.pw, saltRounds)
+    console.log(pwdHash)
 
     //salasana ei näy JSONissa
     const newUser = new User({
       username: body.username,
       name: body.name,
-      pwdHash,
+      //Luukkainen unohtanut kentän vissiin
+      pw: pwdHash,
       adult: body.adult || true
     })
 

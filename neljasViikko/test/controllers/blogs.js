@@ -1,3 +1,5 @@
+const jsonWebToken = require('jsonwebtoken')
+
 const express = require('express')
 const Blog = require('../models/blog')
 const blogsRouter = express.Router()
@@ -5,8 +7,18 @@ const bodyParser = require('body-parser')
 blogsRouter.use(bodyParser.json())
 const User = require('../models/user')
 
+//Muistiinpanoja voi luoda vain kirjautunut käyttäjä
+const getTokenFrom = (req) => {
+    //Header
+    const auth = req.get('authorization')
+    if (auth && auth.toLowerCase().startsWith('bearer ')) {
+        return auth.substring(7)
+    }
+    return null
+}
+
 //Vastaavanlainen kuin käyttäjillä. Tätä kautta saadaan tietoa
-//olemassaolevista OP:sta
+//olemassaolevista lisääjistä
 const formatBlog = (inputBlog) => {
     return {
         id: inputBlog._id,
@@ -30,17 +42,27 @@ blogsRouter.get('/', async (req, res) => {
 })
 
 blogsRouter.post('/', async (req, res) => {
+    console.log('POST')
+    const body = req.body
     try {
-        console.log('POST')
-        const body = req.body
+        const token = getTokenFrom(req)
+        //Käyttäjän id
+        const decodedToken = jsonWebToken.verify(token, process.env.SECRET)
+        if (!token || !decodedToken.id) {
+            return res.status(401).json({ error: 'token missing or invalid token' })
+        }
+
+
         if (body.title === undefined || body.url === undefined || body.title.trim() === "" || body.url.trim() === "") {
             return res.status(400).json({ error: 'otsikko ja/tai url puuttuu' })
         }
 
         // POST - pyynnössä lähtevän objektin kenttä --> userId
         // Rikkoo nykyisiä testejä
-        const foundUser = await User.findById(body.userId)
-        console.log(body.userId)
+        // MUUTOS
+        // const foundUser = await User.findById(body.userId)
+        const foundUser = await User.findById(decodedToken.id)
+        // console.log(body.userId)
 
         const blog = new Blog({
             title: body.title,
@@ -64,7 +86,11 @@ blogsRouter.post('/', async (req, res) => {
 
     } catch (exception) {
         console.log(exception)
-        res.status(500).json({ error: 'something went wrong' })
+        if (exception.name === 'JsonWebTokenError') {
+            res.status(401).json({ error: exception.message })
+        } else {
+            res.status(500).json({ error: 'something went wrong' })
+        }
     }
 })
 
@@ -82,16 +108,6 @@ blogsRouter.put('/:id', async (req, res) => {
     try {
         console.log('PUT')
         const body = req.body
-
-        // Toistaiseksi turha
-        // const blog = new Blog({
-        //     title: body.title,
-        //     author: body.author,
-        //     url: body.url,
-        //     likes: body.likes
-        // })
-
-        //Error [ERR_UNHANDLED_ERROR]: Unhandled error. (TypeError: callback.apply is not a function)
         const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, { $set: { likes: body.likes } }, { new: true }, function (err, result) { })
         res.json(updatedBlog)
     } catch (exception) {

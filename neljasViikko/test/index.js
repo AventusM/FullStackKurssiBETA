@@ -14,6 +14,10 @@ app.use('/api/users', usersRouter)
 
 const blogsRouter = require('./controllers/blogs')
 app.use('/api/blogs', blogsRouter)
+
+const loginRouter = require('./controllers/login')
+app.use('/api/login', loginRouter)
+
 app.use(cors())
 
 mongoose.connect(config.mongoUrl, { useMongoClient: true })
