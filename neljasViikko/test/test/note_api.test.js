@@ -271,6 +271,13 @@ describe('when a single user is in the database', async () => {
   })
 })
 
+describe.only('when a blog is subject to deletion', async () => {
+  
+  //1. käyttäjä luo blogin (esiasetus)
+  //1. testi - 1. käyttäjä poistaa bloginsa --> success
+  //2. testi - 2. käyttäjä yrittää poistaa 1. käyttäjän blogin --> fail
+})
+
 afterAll(() => {
   server.close()
 })
