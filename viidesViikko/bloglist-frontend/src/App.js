@@ -60,9 +60,6 @@ const BlogForm = (props) => {
 class App extends React.Component {
   constructor(props) {
     super(props)
-    //Muista lisätä new_blog : '' myöhemmin
-    // KENTTIEN NIMIEN OLTAVA SAMAT KUIN BACKENDISSÄ
-    // password ---> pw OLI PAKKO TEHDÄ
     this.state = {
       blogs: [],
       username: '',
@@ -83,11 +80,8 @@ class App extends React.Component {
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
     )
-    //Tarkistetaan kirjautuneen käyttäjän tilanne. Muuten user saa arvokseen
-    //aina null sivun uudelleenlatauksen yhteydessä
     const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
     if (loggedInUserJSON) {
-      //Tehdään JSON - muotoisesta stringistä objekti
       const acceptedUser = JSON.parse(loggedInUserJSON)
       this.setState({ user: acceptedUser })
       blogService.setToken(acceptedUser.signedToken)
@@ -131,13 +125,10 @@ class App extends React.Component {
     }
   }
 
-  //Muutos -> ei iffejä, ei duplikaatteja
-  // HUOM EI ASYNC
   handleLoginFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
 
-  //Käytännössä täysin turha duplikaatti
   handleNewBlogChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
@@ -145,7 +136,6 @@ class App extends React.Component {
   addBlog = async (event) => {
     event.preventDefault()
     try {
-      //Jos aiheuttaa ongelmia niin required käyttöön vaan
       if (this.state.title === null || this.state.title.length === 0 || this.state.url === null || this.state.url.length === 0) {
         this.setState({
           error: 'blogista puuttuu otsikko ja/tai salasana'
