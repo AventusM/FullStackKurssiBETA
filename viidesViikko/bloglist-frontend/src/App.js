@@ -3,60 +3,8 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { Togglable, TogglableDiv } from './components/Togglable'
-
-const Notification = (props) => {
-  let shownMsg
-  let shownStyle
-  const { error, msg } = props
-  if (error === null && msg === null) {
-    return null
-  } else if (error !== null && msg === null) {
-    shownMsg = error
-    shownStyle = 'error'
-  } else {
-    shownMsg = msg
-    shownStyle = 'success'
-  }
-
-  return (
-    <div className={shownStyle}>
-      {shownMsg}
-    </div>
-  )
-}
-
-const BlogForm = (props) => {
-  const { titleFieldValue, authorFieldValue, urlFieldValue, blogFormSubmitFunction, blogFormChangeFunction } = props
-  return (
-    <form onSubmit={blogFormSubmitFunction}>
-      <div>
-        title
-              <input
-          type="text"
-          name="title"
-          value={titleFieldValue}
-          onChange={blogFormChangeFunction} />
-      </div>
-      <div>
-        author
-              <input
-          type="text"
-          name="author"
-          value={authorFieldValue}
-          onChange={blogFormChangeFunction} />
-      </div>
-      <div>
-        url
-              <input
-          type="text"
-          name="url"
-          value={urlFieldValue}
-          onChange={blogFormChangeFunction} />
-      </div>
-      <button>create</button>
-    </form>
-  )
-}
+import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 
 class App extends React.Component {
   constructor(props) {
@@ -185,7 +133,6 @@ class App extends React.Component {
         />
       </Togglable>
     )
-
 
     if (this.state.user === null) {
       return (
