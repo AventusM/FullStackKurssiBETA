@@ -23,6 +23,8 @@ sovelluskohde tai mahdollisuus osa-aikatyöhön, jotta asiat pysyisivät muistis
 
 31.12-1.1 -> Taas kerran suht. vaikea päivä. Tarpeellisten ominaisuuksien osalta osa on valmis. Viimeisen tehtävän testin idea ei halua avautua. Osassa oli todella paljon uusia asioita ja se haittasi mielenkiintoani juuri tähän osaan paljon. 17/20 ei ole ehkä ihan se mihin haluaisin tyytyä, mutta pakko on edettävä jo ihan kurssin mielenkiinnon ylläpitämiseksi. Back-to-back back-end vie yhtä paljon mehuja pois kuin lätkätiimien vastaava. Vaikein osa so far (3h käytetty aikaa tehtävien tekoon tänään)  
 
+1.1-2.1 -> Frontin puolella edetty kuuden tehtävän verran. Kaksi viimeisintä suoritusta ei ole täydellisiä ja siksi pyydetään ohjeita asian korjaamiseen ennen kuin edetään tehtävissä. Aikaa käytetty ~3h tänään (toistaiseksi)
+
 #TOTAL  
 OSA 1 - 7h  
 OSA 2 - 12h+  
