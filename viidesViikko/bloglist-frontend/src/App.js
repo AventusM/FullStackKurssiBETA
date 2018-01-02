@@ -3,6 +3,27 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = (props) => {
+  let shownMsg
+  let shownStyle
+  const { error, msg } = props
+  if (error === null && msg === null) {
+    return null
+  } else if (error !== null && msg === null) {
+    shownMsg = error
+    shownStyle = 'error'
+  } else {
+    shownMsg = msg
+    shownStyle = 'success'
+  }
+
+  return (
+    <div className={shownStyle}>
+      {shownMsg}
+    </div>
+  )
+}
+
 const BlogForm = (props) => {
   const { titleFieldValue, authorFieldValue, urlFieldValue, blogFormSubmitFunction, blogFormChangeFunction } = props
   return (
@@ -48,6 +69,7 @@ class App extends React.Component {
       pw: '',
       error: null,
       user: null,
+      msg: null,
 
       //Kuinka käyttäisin näitä propseja
       //Blog.js - tiedostosta?
@@ -123,6 +145,17 @@ class App extends React.Component {
   addBlog = async (event) => {
     event.preventDefault()
     try {
+      //Jos aiheuttaa ongelmia niin required käyttöön vaan
+      if (this.state.title === null || this.state.title.length === 0 || this.state.url === null || this.state.url.length === 0) {
+        this.setState({
+          error: 'blogista puuttuu otsikko ja/tai salasana'
+        })
+        setTimeout(() => {
+          this.setState({ error: null })
+        }, 5000)
+        return
+      }
+
       const blogObject = {
         title: this.state.title,
         author: this.state.author,
@@ -139,6 +172,13 @@ class App extends React.Component {
           })
         })
 
+      this.setState({
+        msg: `a new blog '${blogObject.title}' by ${blogObject.author} added`
+      })
+      setTimeout(() => {
+        this.setState({ msg: null })
+      }, 5000)
+
     } catch (exception) {
       console.log(exception)
     }
@@ -148,8 +188,9 @@ class App extends React.Component {
     if (this.state.user === null) {
       return (
         <div>
+          <Notification error={this.state.error} msg={this.state.msg} />
+
           <h2>Log in to application</h2>
-          {/* login - funktion arvo muuttuu napista */}
           <form onSubmit={this.login}>
             <div>username
             <input
@@ -174,6 +215,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>blogs</h2>
+        <Notification error={this.state.error} msg={this.state.msg} />
         <div>
           {this.state.user.name} logged in
           <button onClick={this.logout}>logout</button>

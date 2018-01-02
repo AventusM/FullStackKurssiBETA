@@ -8,10 +8,10 @@ loginRouter.use(bodyParser.json())
 loginRouter.post('/', async (req, res) => {
   try {
     const body = req.body
-    console.log(body)
+    // console.log(body)
     const foundUser = await User.findOne({ username: body.username })
-    console.log(body.pw)
-    console.log(foundUser.pwdHash)
+    // console.log(body.pw)
+    // console.log(foundUser.pwdHash)
     const pwCorrect = foundUser === null ?
       false :
       //foundUser.pwdHash - suoritus oli hieman outo users.js - tiedostossa. Saattaa
