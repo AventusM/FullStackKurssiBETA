@@ -299,8 +299,8 @@ describe('when a single user is in the database', async () => {
 //   //2. testi - 2. käyttäjä yrittää poistaa 1. käyttäjän blogin --> fail
 // })
 
-afterAll(() => {
-  Blog.remove({})
-  User.remove({})
+afterAll(async () => {
+  await Blog.remove({})
+  await User.remove({})
   server.close()
 })

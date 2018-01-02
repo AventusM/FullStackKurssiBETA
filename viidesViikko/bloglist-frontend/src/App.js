@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { Togglable, TogglableDiv } from './components/Togglable'
 
 const Notification = (props) => {
   let shownMsg
@@ -88,12 +89,9 @@ class App extends React.Component {
     }
   }
 
-  //Konsoliin tiedot kirjautumistilanteesta
-  // HUOM ASYNC
   login = async (event) => {
     event.preventDefault()
     try {
-      //Kirjaudutaan sisään annetuilla tunnuksilla, login - metodi ottaa vain 1 parametrin..?
       const user = await loginService.login({
         username: this.state.username,
         pw: this.state.pw
@@ -101,14 +99,11 @@ class App extends React.Component {
 
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       blogService.setToken(user.signedToken) // Käyttäjä voi lisätä uusia blogeja tokenin avulla
-      //Token alla
-      // console.log(user.signedToken)
       this.setState({ username: '', pw: '', user })
     } catch (exception) {
       this.setState({
         error: 'virheellinen käyttäjätunnus tai salasana'
       })
-      //Ajastin sille, kuinka pitkään ylläolevaa erroria näytetään
       setTimeout(() => {
         this.setState({ error: null })
       }, 5000)
@@ -135,6 +130,9 @@ class App extends React.Component {
 
   addBlog = async (event) => {
     event.preventDefault()
+    //Kun lisätään blogi, niin piilotetaan lisäyskenttä täällä
+    //tähän tarkoitukseen vaaditaan ref
+    this.blogForm.toggleVisibility()
     try {
       if (this.state.title === null || this.state.title.length === 0 || this.state.url === null || this.state.url.length === 0) {
         this.setState({
@@ -175,6 +173,20 @@ class App extends React.Component {
   }
 
   render() {
+    //Kokeillaan erotella täysin omana osanaan täällä
+    const blogForm = () => (
+      <Togglable buttonLabel="new blog" ref={component => this.blogForm = component}>
+        <BlogForm
+          titleFieldValue={this.state.title}
+          authorFieldValue={this.state.author}
+          urlFieldValue={this.state.url}
+          blogFormChangeFunction={this.handleNewBlogChange}
+          blogFormSubmitFunction={this.addBlog}
+        />
+      </Togglable>
+    )
+
+
     if (this.state.user === null) {
       return (
         <div>
@@ -212,17 +224,12 @@ class App extends React.Component {
         </div>
         <div>
           <h2>create new</h2>
-          <BlogForm
-            titleFieldValue={this.state.title}
-            authorFieldValue={this.state.author}
-            urlFieldValue={this.state.url}
-            blogFormChangeFunction={this.handleNewBlogChange}
-            blogFormSubmitFunction={this.addBlog}
-          />
+          {blogForm()}
         </div>
         {this.state.blogs.map(blog =>
-          <Blog key={blog._id} blog={blog} />
-        )}
+          <TogglableDiv title={blog.title} author={blog.author}>
+            <Blog key={blog._id} blog={blog} user={blog.user} />
+          </TogglableDiv>)}
       </div>
     );
   }
