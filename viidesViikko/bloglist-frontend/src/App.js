@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -68,11 +68,7 @@ class App extends React.Component {
     }
   }
 
-  handleLoginFieldChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value })
-  }
-
-  handleNewBlogChange = (event) => {
+  handleFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
 
@@ -128,7 +124,7 @@ class App extends React.Component {
           titleFieldValue={this.state.title}
           authorFieldValue={this.state.author}
           urlFieldValue={this.state.url}
-          blogFormChangeFunction={this.handleNewBlogChange}
+          blogFormChangeFunction={this.handleFieldChange}
           blogFormSubmitFunction={this.addBlog}
         />
       </Togglable>
@@ -146,14 +142,14 @@ class App extends React.Component {
                 type="text"
                 name="username" //TÄRKEÄ IFFIHÄSSÄKÄN POISTAMISEKSI
                 value={this.state.username}
-                onChange={this.handleLoginFieldChange} />
+                onChange={this.handleFieldChange} />
             </div>
             <div>password
               <input
                 type="password"
                 name="pw" //TÄRKEÄ IFFIHÄSSÄKÄN POISTAMISEKSI
                 value={this.state.pw}
-                onChange={this.handleLoginFieldChange} />
+                onChange={this.handleFieldChange} />
             </div>
             <button>login</button>
           </form>
@@ -175,8 +171,10 @@ class App extends React.Component {
         </div>
         {this.state.blogs.map(blog =>
           <TogglableDiv title={blog.title} author={blog.author}>
+            {/* Miksi valittaa vaikka key on asetettu? */}
             <Blog key={blog._id} blog={blog} user={blog.user} />
-          </TogglableDiv>)}
+          </TogglableDiv>
+        )}
       </div>
     );
   }

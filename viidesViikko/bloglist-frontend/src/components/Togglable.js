@@ -34,12 +34,17 @@ class TogglableDiv extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      visible: false
+      visible: false,
+      likes: 0,
     }
   }
 
   toggleVisibility = () => {
     this.setState({ visible: !this.state.visible })
+  }
+
+  addLikes = () => {
+    this.setState({ likes: this.state.likes + 1 })
   }
 
   render() {
