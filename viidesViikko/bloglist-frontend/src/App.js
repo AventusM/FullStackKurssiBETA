@@ -1,5 +1,5 @@
 import React from 'react'
-import Blog from './components/Blog'
+// import Blog from './components/Blog' SIIRRETÄÄN TAKAISIN MYÖHEMMIN. NYT CONSTINA TÄÄLLÄ
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { Togglable, TogglableDiv } from './components/Togglable'
@@ -17,8 +17,6 @@ class App extends React.Component {
       user: null,
       msg: null,
 
-      //Kuinka käyttäisin näitä propseja
-      //Blog.js - tiedostosta?
       title: '',
       author: '',
       url: ''
@@ -116,6 +114,45 @@ class App extends React.Component {
     }
   }
 
+  addLike = (id) => async (event) => {
+    event.preventDefault()
+    event.stopPropagation() // Estetään parentin toiminto (toggle)
+    try {
+
+      const foundBlog = this.state.blogs.find(blog => blog.id === id)
+      const updatedBlog = { ...foundBlog, likes: foundBlog.likes + 1 }
+
+      // const result = 
+      blogService.updateBlog(id, updatedBlog)
+        .then(res => res.config)
+        .then(config => {
+          const byId = (blog1, blog2) => blog1.likes < blog2.likes
+          const blog = JSON.parse(config.data)
+          const remainingBlogs = this.state.blogs.filter(blog => blog.id !== id)
+          this.setState({
+            blogs: remainingBlogs.concat(blog).sort(byId)
+          })
+          console.log(blog)
+        })
+
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
+
+  //Blogitaulukon manipulointi tapahtuu
+  //tässä komponentissa
+  // removeBlog = async (id) => (event) => {
+  //   event.preventDefault()
+  //   try {
+  //     console.log(window.localStorage.getItem('loggedInUser'))
+
+  //   } catch (exception) {
+  //     console.log(exception)
+  //   }
+  // }
+
   render() {
     //Kokeillaan erotella täysin omana osanaan täällä
     const blogForm = () => (
@@ -172,12 +209,27 @@ class App extends React.Component {
         {this.state.blogs.map(blog =>
           <TogglableDiv title={blog.title} author={blog.author}>
             {/* Miksi valittaa vaikka key on asetettu? */}
-            <Blog key={blog._id} blog={blog} user={blog.user} />
+            <Blog key={blog._id} blog={blog} user={blog.user} likeFunction={this.addLike} />
           </TogglableDiv>
         )}
       </div>
     );
   }
+}
+
+const Blog = (props) => {
+  //constiin vielä likeFunction, deleteFunction
+  //id löytyy tämän sisältä (blog.id / {key})
+  const { blog, user, likeFunction } = props
+  return (
+    <div>
+      {blog.title} {blog.author}
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;<a href={blog.url}>{blog.url}</a></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;added by {user.name}</div>
+      <button>delete</button>
+    </div>
+  )
 }
 
 export default App;

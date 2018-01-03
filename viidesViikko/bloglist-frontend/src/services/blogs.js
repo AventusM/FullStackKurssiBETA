@@ -23,6 +23,12 @@ const updateBlog = (id, newObject) => {
   //await ei ehkä tarpeellinen -> katso matsku .. ?
   //antaa tosiaan failed to compile errorin ???
   const req = axios.put(`${baseUrl}/${id}`, newObject)
+  return req // jos laittaa thenin tänne niin res => res.config, ei res.data (itellä näin)
+}
+
+//await - async?
+const deleteBlog = async (id, objectToDelete) => {
+  const req = await axios.delete(`${baseUrl}/${id}`, objectToDelete)
   return req.then(res => res.data)
 }
 

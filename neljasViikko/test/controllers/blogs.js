@@ -121,7 +121,7 @@ blogsRouter.put('/:id', async (req, res) => {
     try {
         console.log('PUT')
         const body = req.body
-        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, { $set: { likes: body.likes } }, { new: true }, function (err, result) { })
+        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, { $set: { user: body.user, likes: body.likes, author: body.author, title: body.title, url: body.url } }, { new: true }, function (err, result) { })
         res.json(updatedBlog)
     } catch (exception) {
         console.log(exception)
