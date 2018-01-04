@@ -16,20 +16,24 @@ const createBlog = async (newObject) => {
     headers: { 'Authorization': token }
   }
   const res = await axios.post(baseUrl, newObject, config)
+  console.log('createBlog', res)
   return res.data
 }
 
 const updateBlog = (id, newObject) => {
   //await ei ehkä tarpeellinen -> katso matsku .. ?
   //antaa tosiaan failed to compile errorin ???
-  const req = axios.put(`${baseUrl}/${id}`, newObject)
-  return req // jos laittaa thenin tänne niin res => res.config, ei res.data (itellä näin)
+  const result = axios.put(`${baseUrl}/${id}`, newObject)
+  return result // jos laittaa thenin tänne niin res => res.config, ei res.data (itellä siis)
 }
 
 //await - async?
-const deleteBlog = async (id, objectToDelete) => {
-  const req = await axios.delete(`${baseUrl}/${id}`, objectToDelete)
-  return req.then(res => res.data)
+const deleteBlog = async (id) => {
+  const config = {
+    headers: { 'Authorization': token }
+  }
+  const result = await axios.delete(`${baseUrl}/${id}`, config)
+  return result
 }
 
-export default { getAll, createBlog, updateBlog, setToken }
+export default { getAll, createBlog, updateBlog, setToken, deleteBlog }

@@ -24,9 +24,10 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    blogService.getAll().then(blogs =>
-      this.setState({ blogs })
-    )
+    blogService.getAll().then(blogs => {
+      const byId = (blog1, blog2) => blog1.likes < blog2.likes
+      this.setState({ blogs: blogs.sort(byId) })
+    })
     const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
     if (loggedInUserJSON) {
       const acceptedUser = JSON.parse(loggedInUserJSON)
@@ -89,10 +90,10 @@ class App extends React.Component {
       const blogObject = {
         title: this.state.title,
         author: this.state.author,
-        url: this.state.url
+        url: this.state.url,
       }
 
-      blogService.createBlog(blogObject)
+      await blogService.createBlog(blogObject)
         .then(newBlog => {
           this.setState({
             blogs: this.state.blogs.concat(newBlog),
@@ -101,6 +102,13 @@ class App extends React.Component {
             url: ''
           })
         })
+
+      //WORKAROUND - JOSTAIN SYYSTÄ LISÄÄJÄN NIMI EI LATAUDU UUTTA BLOGIA LISÄTESSÄ
+      // ===> delete - nappi ei myöskään mahdollista renderöidä 
+      blogService.getAll().then(blogs => {
+        const byId = (blog1, blog2) => blog1.likes < blog2.likes
+        this.setState({ blogs: blogs.sort(byId) })
+      })
 
       this.setState({
         msg: `a new blog '${blogObject.title}' by ${blogObject.author} added`
@@ -114,7 +122,7 @@ class App extends React.Component {
     }
   }
 
-  addLike = (id) => async (event) => {
+  addLike = (id) => (event) => {
     event.preventDefault()
     event.stopPropagation() // Estetään parentin toiminto (toggle)
     try {
@@ -143,17 +151,30 @@ class App extends React.Component {
 
   //Blogitaulukon manipulointi tapahtuu
   //tässä komponentissa
-  // removeBlog = async (id) => (event) => {
-  //   event.preventDefault()
-  //   try {
-  //     console.log(window.localStorage.getItem('loggedInUser'))
+  //oikea muoto removeBlog = (id) => async(?) (event) => {...}
+  removeBlog = (id) => async (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    try {
+      console.log('blog id --->' + id)
+      const foundBlog = this.state.blogs.find(blog => blog.id === id)
+      if (window.confirm(`delete '${foundBlog.title}' by '${foundBlog.author}' ?`)) {
+        await blogService.deleteBlog(id) //result.data = "" --> ei then-ketjuja tms.
+        const remainingBlogs = this.state.blogs.filter(blog => blog.id !== id)
+        this.setState({
+          blogs: remainingBlogs
+        })
+      }
 
-  //   } catch (exception) {
-  //     console.log(exception)
-  //   }
-  // }
+
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
 
   render() {
+    console.log(this.state.user)
+
     //Kokeillaan erotella täysin omana osanaan täällä
     const blogForm = () => (
       <Togglable buttonLabel="new blog" ref={component => this.blogForm = component}>
@@ -208,8 +229,7 @@ class App extends React.Component {
         </div>
         {this.state.blogs.map(blog =>
           <TogglableDiv title={blog.title} author={blog.author}>
-            {/* Miksi valittaa vaikka key on asetettu? */}
-            <Blog key={blog._id} blog={blog} user={blog.user} likeFunction={this.addLike} />
+            <Blog key={blog._id} blog={blog} likeFunction={this.addLike} removeFunction={this.removeBlog} />
           </TogglableDiv>
         )}
       </div>
@@ -218,16 +238,23 @@ class App extends React.Component {
 }
 
 const Blog = (props) => {
-  //constiin vielä likeFunction, deleteFunction
-  //id löytyy tämän sisältä (blog.id / {key})
-  const { blog, user, likeFunction } = props
+  const { blog, likeFunction, removeFunction } = props
+  const loggedInUser = JSON.parse(window.localStorage.getItem('loggedInUser'))
+  const addedByAnon = !blog.user // Voi kattoa joku this.state.blogs.find(blog => blog.... === ...)
+  const match = addedByAnon ?
+    false : // Tarkastelua ei lähdetä suorittamaan (satavarma error)
+    blog.user.username === loggedInUser.username // Normaali tarkastelu
   return (
     <div>
       {blog.title} {blog.author}
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<a href={blog.url}>{blog.url}</a></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;added by {user.name}</div>
-      <button>delete</button>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href={blog.url}>{blog.url}</a></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></p>
+      {addedByAnon ?
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by anon</p> :
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by {blog.user.name}</p>}
+      {match || addedByAnon ?
+        <button onClick={removeFunction(blog.id)}>delete</button> :
+        <p></p>}
     </div>
   )
 }

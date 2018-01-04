@@ -44,8 +44,25 @@ blogsRouter.get('/', async (req, res) => {
 blogsRouter.post('/', async (req, res) => {
     console.log('POST')
     const body = req.body
+    console.log(body)
     try {
         const token = getTokenFrom(req)
+
+        if (!token) {
+            const blog = new Blog({
+                title: body.title,
+                author: body.author,
+                url: body.url,
+                likes: body.likes || 0,
+                // haettu POST:lla
+                // inputBlog.user saadaan tästä
+                user: null
+            })
+            const savedBlog = await blog.save({})
+            res.status(200).json(formatBlog(savedBlog))
+            return
+        }
+
         //Käyttäjän id
         //request.token ----> oma middleware käytössä (tokenExtractor)
         const decodedToken = jsonWebToken.verify(token, process.env.SECRET)
@@ -97,6 +114,10 @@ blogsRouter.delete('/:id', async (req, res) => {
     try {
         console.log('DELETE')
         const blog = await Blog.findById(req.params.id)
+        if (!blog.user) {
+            await blog.remove()
+            return res.status(204).send("Deleted a blog submitted by an anonymous person").end()
+        }
 
         const token = getTokenFrom(req)
         const decodedToken = jsonWebToken.verify(token, process.env.SECRET)
