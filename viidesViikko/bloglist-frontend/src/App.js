@@ -1,5 +1,5 @@
 import React from 'react'
-// import Blog from './components/Blog' SIIRRETÄÄN TAKAISIN MYÖHEMMIN. NYT CONSTINA TÄÄLLÄ
+import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { Togglable, TogglableDiv } from './components/Togglable'
@@ -140,7 +140,7 @@ class App extends React.Component {
           this.setState({
             blogs: remainingBlogs.concat(blog).sort(byId)
           })
-          console.log(blog)
+          // console.log(blog)
         })
 
     } catch (exception) {
@@ -156,7 +156,7 @@ class App extends React.Component {
     event.preventDefault()
     event.stopPropagation()
     try {
-      console.log('blog id --->' + id)
+      // console.log('blog id --->' + id)
       const foundBlog = this.state.blogs.find(blog => blog.id === id)
       if (window.confirm(`delete '${foundBlog.title}' by '${foundBlog.author}' ?`)) {
         await blogService.deleteBlog(id) //result.data = "" --> ei then-ketjuja tms.
@@ -173,7 +173,7 @@ class App extends React.Component {
   }
 
   render() {
-    console.log(this.state.user)
+    // console.log(this.state.user)
 
     //Kokeillaan erotella täysin omana osanaan täällä
     const blogForm = () => (
@@ -228,7 +228,7 @@ class App extends React.Component {
           {blogForm()}
         </div>
         {this.state.blogs.map(blog =>
-          <TogglableDiv title={blog.title} author={blog.author}>
+          <TogglableDiv key={blog.id} title={blog.title} author={blog.author}>
             <Blog key={blog._id} blog={blog} likeFunction={this.addLike} removeFunction={this.removeBlog} />
           </TogglableDiv>
         )}
@@ -237,26 +237,26 @@ class App extends React.Component {
   }
 }
 
-const Blog = (props) => {
-  const { blog, likeFunction, removeFunction } = props
-  const loggedInUser = JSON.parse(window.localStorage.getItem('loggedInUser'))
-  const addedByAnon = !blog.user // Voi kattoa joku this.state.blogs.find(blog => blog.... === ...)
-  const match = addedByAnon ?
-    false : // Tarkastelua ei lähdetä suorittamaan (satavarma error)
-    blog.user.username === loggedInUser.username // Normaali tarkastelu
-  return (
-    <div>
-      {blog.title} {blog.author}
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href={blog.url}>{blog.url}</a></p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></p>
-      {addedByAnon ?
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by anon</p> :
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by {blog.user.name}</p>}
-      {match || addedByAnon ?
-        <button onClick={removeFunction(blog.id)}>delete</button> :
-        <p></p>}
-    </div>
-  )
-}
+// const Blog = (props) => {
+//   const { blog, likeFunction, removeFunction } = props
+//   const loggedInUser = JSON.parse(window.localStorage.getItem('loggedInUser'))
+//   const addedByAnon = !blog.user // Voi kattoa joku this.state.blogs.find(blog => blog.... === ...)
+//   const match = addedByAnon ?
+//     false : // Tarkastelua ei lähdetä suorittamaan (satavarma error)
+//     blog.user.username === loggedInUser.username // Normaali tarkastelu
+//   return (
+//     <div>
+//       {blog.title} {blog.author}
+//       <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href={blog.url}>{blog.url}</a></p>
+//       <p>&nbsp;&nbsp;&nbsp;&nbsp;{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></p>
+//       {addedByAnon ?
+//         <p>&nbsp;&nbsp;&nbsp;&nbsp;added by anon</p> :
+//         <p>&nbsp;&nbsp;&nbsp;&nbsp;added by {blog.user.name}</p>}
+//       {match || addedByAnon ?
+//         <button onClick={removeFunction(blog.id)}>delete</button> :
+//         <p></p>}
+//     </div>
+//   )
+// }
 
 export default App;

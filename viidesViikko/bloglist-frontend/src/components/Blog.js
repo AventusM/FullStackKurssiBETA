@@ -1,46 +1,32 @@
-// import React from 'react'
-// import blogService from '../services/blogs'
+import React from 'react'
+import PropTypes from 'prop-types'
 
-// class Blog extends React.Component {
-//   constructor(props) {
-//     super(props)
-//   }
+const Blog = (props) => {
+  const { blog, likeFunction, removeFunction } = props
+  const loggedInUser = JSON.parse(window.localStorage.getItem('loggedInUser'))
+  const addedByAnon = !blog.user // Voi kattoa joku this.state.blogs.find(blog => blog.... === ...)
+  const match = addedByAnon ?
+    false : // Tarkastelua ei lähdetä suorittamaan (satavarma error)
+    blog.user.username === loggedInUser.username // Normaali tarkastelu
+  return (
+    <div>
+      {blog.title} {blog.author}
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href={blog.url}>{blog.url}</a></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></p>
+      {addedByAnon ?
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by anon</p> :
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by {blog.user.name}</p>}
+      {match || addedByAnon ?
+        <button onClick={removeFunction(blog.id)}>delete</button> :
+        <p></p>}
+    </div>
+  )
+}
 
-//   addLike = (event) => {
-//     event.preventDefault()
-//     event.stopPropagation() // Estetään parentin toiminto (toggle)
-//     console.log('likes before update --> ' + this.props.blog.likes)
-//     try {
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  likeFunction: PropTypes.func.isRequired,
+  removeFunction: PropTypes.func.isRequired
+}
 
-//       console.log(this.props.user)
-//       const blogObject = {
-//         user: this.props.user._id,
-//         title: this.props.blog.title,
-//         author: this.props.blog.author,
-//         url: this.props.blog.url,
-//         likes: this.props.blog.likes + 1
-//       }
-
-//       console.log(blogObject)
-//       blogService.updateBlog(this.props.blog.id, blogObject)
-//       console.log('likes after update ---> ' + this.props.blog.likes)
-//     } catch (exception) {
-//       console.log(exception)
-//     }
-//   }
-
-//   render() {
-
-//     return (
-//       <div>
-//         {this.props.blog.title} {this.props.blog.author}
-//         <div>&nbsp;&nbsp;&nbsp;&nbsp;<a href={this.props.blog.url}>{this.props.blog.url}</a></div>
-//         <div>&nbsp;&nbsp;&nbsp;&nbsp;{this.props.blog.likes} likes <button onClick={this.addLike}>like</button></div>
-//         <div>&nbsp;&nbsp;&nbsp;&nbsp;added by {this.props.user.name}</div>
-//         <button>delete</button>
-//       </div>
-//     )
-//   }
-// }
-
-// export default Blog
+export default Blog
