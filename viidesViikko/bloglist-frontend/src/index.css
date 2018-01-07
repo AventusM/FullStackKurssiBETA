@@ -9,10 +9,14 @@ h1 {
   font-style: italic;
 }
 
-.note {
+.blog {
   color: grey;
   padding-top: 5px;
   font-size: 15px;
+}
+
+.intro {
+  padding-top: 1px;
 }
 
 .error {
@@ -35,9 +39,9 @@ h1 {
   margin-bottom: 10px;
 }
 
-.notes {
+.blogs {
   margin-top: 10px;
-  margin-left: 3px;
+  margin-left: 10px;
 }
 
 .wrapper {

@@ -11,14 +11,16 @@ const Blog = (props) => {
   return (
     <div>
       {blog.title} {blog.author}
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href={blog.url}>{blog.url}</a></p>
-      <p>&nbsp;&nbsp;&nbsp;&nbsp;{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></p>
-      {addedByAnon ?
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by anon</p> :
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;added by {blog.user.name}</p>}
-      {match || addedByAnon ?
-        <button onClick={removeFunction(blog.id)}>delete</button> :
-        <p></p>}
+      <div className="blogs">
+        <div><a href={blog.url}>{blog.url}</a></div>
+        <div>{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></div>
+        {addedByAnon ?
+          <div>added by anon</div> :
+          <div>added by {blog.user.name}</div>}
+        {match || addedByAnon ?
+          <button onClick={removeFunction(blog.id)}>delete</button> :
+          <div></div>}
+      </div>
     </div>
   )
 }
