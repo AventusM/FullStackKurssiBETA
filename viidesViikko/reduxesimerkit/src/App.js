@@ -1,38 +1,60 @@
-import React, { Component } from 'react';
-import noteReducer from './noteReducer'
-import { createStore } from 'redux'
+import React from 'react'
+import actionFor from './actionCreators'
 
-const store = createStore(noteReducer)
-
-store.dispatch({
-  type: 'NEW_NOTE',
-  data: {
-    content: 'sovelluksen tila talletetaan storeen',
-    important: true,
-    id: 1
+class NoteForm extends React.Component {
+  addNote = (event) => {
+    event.preventDefault()
+    this.props.passedStoreFromApp.dispatch(actionFor.noteCreation(event.target.note.value))
+    event.target.note.value = ''
   }
-})
-
-store.dispatch({
-  type: 'NEW_NOTE',
-  data: {
-    content: 'tilanmuutokset tehdään actioneilla',
-    important: false,
-    id: 2
-  }
-})
-
-class App extends React.Component {
   render() {
     return (
+      <form onSubmit={this.addNote}>
+        <input name="note" />
+        <button>lisää</button>
+      </form>
+    )
+  }
+}
+
+const Note = (props) => {
+  const { note, handleClick } = props
+  return (
+    <li key={note.id} onClick={handleClick}>
+      {note.content} <strong>{note.important ? 'tärkeä' : ''}</strong>
+    </li>
+  )
+}
+
+class NoteList extends React.Component {
+  toggleImportance = (id) => (e) => {
+    this.props.passedStoreFromApp.dispatch(
+      actionFor.importanceToggling(id)
+    )
+  }
+  render() {
+    return (
+      <ul>
+        {this.props.passedStoreFromApp.getState().map(note =>
+          <Note
+            key={note.id}
+            note={note}
+            handleClick={this.toggleImportance(note.id)}
+          />
+        )}
+      </ul>
+    )
+  }
+}
+
+class App extends React.Component {
+
+  render() {
+    console.log(this.props.store.getState())
+    return (
       <div>
-        <ul>
-          {store.getState().map(note =>
-            <li key={note.id}>
-              {note.content} <strong>{note.important ? 'tärkeä' : ''}</strong>
-            </li>
-          )}
-        </ul>
+        <NoteForm passedStoreFromApp={this.props.store} />
+        <NoteList passedStoreFromApp={this.props.store} />
       </div>
     )
   }
