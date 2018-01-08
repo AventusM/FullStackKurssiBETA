@@ -15,8 +15,16 @@ h1 {
   font-size: 15px;
 }
 
-.intro {
-  padding-top: 1px;
+.clickedBlog {
+  margin-left: 0px;
+}
+
+.defaultVisibilityBlog{
+  margin-left: 0px;
+}
+
+.clickableBlog{
+  margin-left: 0px;
 }
 
 .error {
@@ -40,7 +48,6 @@ h1 {
 }
 
 .blogs {
-  margin-top: 10px;
   margin-left: 10px;
 }
 
