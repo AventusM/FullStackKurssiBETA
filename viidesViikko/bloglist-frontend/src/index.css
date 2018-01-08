@@ -15,15 +15,7 @@ h1 {
   font-size: 15px;
 }
 
-.clickedBlog {
-  margin-left: 0px;
-}
-
-.defaultVisibilityBlog{
-  margin-left: 0px;
-}
-
-.clickableBlog{
+.clickedBlog, defaultVisibilityBlog, clickableBlog, loginForm, blogForm{
   margin-left: 0px;
 }
 

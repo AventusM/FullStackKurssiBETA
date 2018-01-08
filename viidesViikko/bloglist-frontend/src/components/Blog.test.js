@@ -1,9 +1,14 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
 import foo from 'enzyme-matchers'
 import Adapter from 'enzyme-adapter-react-16'
 import { TogglableDiv, Togglable } from './Togglable'
+jest.mock('../services/blogs')
+import { localStorageMock } from '../setupTests'
+import blogService from '../services/blogs'
 import Blog from './Blog'
+import App from '../App'
+import Wrapper from './Wrapper'
 
 describe('<TogglableDiv/>', () => {
   let blog
@@ -56,4 +61,49 @@ describe('<TogglableDiv/>', () => {
   })
 
 
+})
+
+
+describe.only('<App />', () => {
+  let app
+  let loginForm
+
+  describe('when user is not logged', () => {
+    beforeEach(() => {
+      app = mount(<App />)
+    })
+
+    it('only login form is rendered', () => {
+      app.update()
+      loginForm = app.find('.loginForm')
+      // console.log(loginForm.debug())
+      expect(loginForm.text()).toContain('username')
+      expect(loginForm.text()).toContain('password')
+      expect(loginForm.text()).toContain('login')
+    })
+  })
+
+  describe('when user is logged', () => {
+    let onSubmit
+    let wrapper
+    beforeEach(() => {
+      app = mount(<App />)
+      onSubmit = jest.fn()
+      wrapper = mount(
+        <Wrapper onSubmit={onSubmit} />
+      )
+      const input = wrapper.find('input')
+      const button = wrapper.find('button')
+
+      input.simulate('change', { target: { username: 'AntonM' } })
+      input.simulate('change', { target: { password: 'test' } })
+      button.simulate('submit')
+      console.log(wrapper.debug())
+    })
+
+    it('all notes are rendered', () => {
+      app.update()
+      // ...
+    })
+  })
 })

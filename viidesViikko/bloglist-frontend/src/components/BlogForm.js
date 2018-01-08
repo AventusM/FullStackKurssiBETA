@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 const BlogForm = (props) => {
   const { titleFieldValue, authorFieldValue, urlFieldValue, blogFormSubmitFunction, blogFormChangeFunction } = props
   return (
-    <form onSubmit={blogFormSubmitFunction}>
+    <form onSubmit={blogFormSubmitFunction} className="blogForm">
       <div>
         title&nbsp;&nbsp;&nbsp;&nbsp;
               <input
