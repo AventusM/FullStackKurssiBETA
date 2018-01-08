@@ -1,12 +1,27 @@
-import React from 'react';
+import React from 'react'
+import { actionFor } from './reducer'
 
-
-const actionFor = {
-  upvoting(id) {
-    return {
-      type: 'UPVOTE',
-      id
-    }
+class AnecdoteForm extends React.Component {
+  addAnecdote = (event) => {
+    event.preventDefault()
+    //input name anecdote --> event.target.anecdote.value
+    const content = event.target.anecdote.value
+    this.props.store.dispatch(actionFor.anecdoteCreation(content))
+    //Reset kentän arvo anekdootin lisäyksen jälkeen
+    event.target.anecdote.value = ''
+  }
+  render() {
+    return (
+      <div>
+        <h2>create new</h2>
+        <form onSubmit={this.addAnecdote}>
+          <div>
+            <input name="anecdote" />
+          </div>
+          <button>create</button>
+        </form>
+      </div>
+    )
   }
 }
 
@@ -28,6 +43,7 @@ class AnecdoteList extends React.Component {
   render() {
     return (
       <div>
+        <h2>Anecdotes</h2>
         {this.props.store.getState().map(anecdote =>
           <Anecdote
             key={anecdote.id}
@@ -41,19 +57,13 @@ class AnecdoteList extends React.Component {
 }
 
 class App extends React.Component {
-
   render() {
     return (
       <div>
-        <h2>Anecdotes</h2>
+        {/* Luokat voivat jatkaa vähän hassusti this.props.storella omassa luokassaan
+        refaktoroinnin kannalta vähän yksi hailee... Tämä tapa sallii nimien pysyvän samana */}
         <AnecdoteList store={this.props.store} />
-
-        <h2>create new</h2>
-
-        <form>
-          <div><input /></div>
-          <button>create</button>
-        </form>
+        <AnecdoteForm store={this.props.store} />
       </div>
     )
   }

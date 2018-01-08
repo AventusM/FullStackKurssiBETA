@@ -17,10 +17,31 @@ const asObject = (anecdote) => {
   }
 }
 
+const actionFor = {
+  upvoting(id) {
+    return {
+      type: 'UPVOTE',
+      id
+    }
+  },
+  anecdoteCreation(content) {
+    return {
+      type: 'NEW_ANECDOTE',
+      anecdote: {
+        content,
+        id: getId(),
+        votes: 0
+      }
+    }
+  }
+}
+
 const initialState = anecdotesAtStart.map(asObject)
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'NEW_ANECDOTE':
+      return state.concat(action.anecdote)
     case 'UPVOTE':
       const id = action.id
       console.log(id)
@@ -36,4 +57,5 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export default reducer
+//Enemmän kuin yksi --> default veke
+export { reducer, actionFor }
