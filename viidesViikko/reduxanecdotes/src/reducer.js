@@ -29,7 +29,8 @@ const reducer = (state = initialState, action) => {
       const anecdoteToChange = state.find(alkio => alkio.id === id)
       console.log(anecdoteToChange)
       const upvotedAnecdote = { ...anecdoteToChange, votes: anecdoteToChange.votes + 1 }
-      return newState.concat(upvotedAnecdote) // MUISTA LISÄTÄ JÄRJESTYS SEURAAVAAN TEHTÄVÄÄN
+      const byVotes = (anecdote1, anecdote2) => anecdote1.votes < anecdote2.votes
+      return newState.concat(upvotedAnecdote).sort(byVotes) // MUISTA LISÄTÄ JÄRJESTYS SEURAAVAAN TEHTÄVÄÄN
     default:
       return state
   }
