@@ -2,6 +2,7 @@ import React from 'react'
 
 class Notification extends React.Component {
   render() {
+    console.log('kutsu Notification - luokan sisältä: ', this.props.store.getState().message)
     const style = {
       border: 'solid',
       padding: 10,
@@ -9,7 +10,7 @@ class Notification extends React.Component {
     }
     return (
       <div style={style}>
-        render here notification...
+        {this.props.store.getState().message}
       </div>
     )
   }
