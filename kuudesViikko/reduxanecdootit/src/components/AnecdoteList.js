@@ -22,7 +22,7 @@ class AnecdoteList extends React.Component {
                 this.props.store.dispatch(upvoting(anecdote.id));
                 this.props.store.dispatch(changeMessage(`you voted for '${anecdote.content}'`));
                 setTimeout(() => {
-                  this.props.store.dispatch({ type: 'DELETE_MESSAGE' })
+                  this.props.store.dispatch(deleteMessage())
                 }, 5000) // Kaikki tämä tapahtuu PER yksi onclick eli sen spämmääminen aiheuttaa mielenkiintoisen tilanteen (reset aina 5 sekunnin välein --> viimeisin tapahtuma ei välttämättä näy pitkään)
               }}>
                 vote
