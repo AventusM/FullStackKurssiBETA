@@ -2,6 +2,7 @@ import React from 'react'
 
 class Notification extends React.Component {
   render() {
+    const isNull = this.props.store.getState().message === null
     console.log('kutsu Notification - luokan sisältä: ', this.props.store.getState().message)
     const style = {
       border: 'solid',
@@ -9,8 +10,12 @@ class Notification extends React.Component {
       borderWidth: 1
     }
     return (
-      <div style={style}>
-        {this.props.store.getState().message}
+      <div>
+        {isNull
+          ? <p></p>
+          : <div style={style}>
+            {this.props.store.getState().message}
+          </div>}
       </div>
     )
   }

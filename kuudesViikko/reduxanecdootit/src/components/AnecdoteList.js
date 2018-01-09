@@ -1,5 +1,6 @@
 import React from 'react'
 import { upvoting } from './../reducers/anecdoteReducer'
+import { changeMessage, deleteMessage } from './../reducers/messageReducer'
 
 class AnecdoteList extends React.Component {
   render() {
@@ -15,9 +16,15 @@ class AnecdoteList extends React.Component {
             </div>
             <div>
               has {anecdote.votes}
-              <button onClick={() =>
-                this.props.store.dispatch(upvoting(anecdote.id))
-              }>
+              {/* https://stackoverflow.com/questions/26069238/call-multiple-functions-onclick-reactjs?answertab=votes#tab-top */}
+              {/* https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout?answertab=votes#tab-top */}
+              <button onClick={() => {
+                this.props.store.dispatch(upvoting(anecdote.id));
+                this.props.store.dispatch(changeMessage(`you voted for '${anecdote.content}'`));
+                setTimeout(() => {
+                  this.props.store.dispatch({ type: 'DELETE_MESSAGE' })
+                }, 5000) // Kaikki tämä tapahtuu PER yksi onclick eli sen spämmääminen aiheuttaa mielenkiintoisen tilanteen (reset aina 5 sekunnin välein --> viimeisin tapahtuma ei välttämättä näy pitkään)
+              }}>
                 vote
               </button>
             </div>

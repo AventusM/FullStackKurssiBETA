@@ -1,7 +1,10 @@
-const messageReducer = (state = 'TestiPohjaViesti', action) => {
+const messageReducer = (state = null, action) => {
+  console.log('ACTION: ' + action)
   switch (action.type) {
-    case 'NEW_MESSAGE': // Toistaiseksi ainoa, tilanne näyttää hassulta kun kaikki on samassa tiedostossa
+    case 'NEW_MESSAGE':
       return action.message
+    case 'DELETE_MESSAGE':
+      return null
     default:
       return state
   }
@@ -11,6 +14,12 @@ export const changeMessage = (message) => {
   return {
     type: 'NEW_MESSAGE',
     message
+  }
+}
+
+export const deleteMessage = () => {
+  return {
+    type: 'DELETE_MESSAGE'
   }
 }
 
