@@ -1,6 +1,6 @@
 import React from 'react'
 import { anecdoteCreation } from './../reducers/anecdoteReducer'
-import { changeMessage } from './../reducers/messageReducer'
+import { changeMessage, deleteMessage } from './../reducers/messageReducer'
 import { connect } from 'react-redux'
 
 class AnecdoteForm extends React.Component {
@@ -9,8 +9,9 @@ class AnecdoteForm extends React.Component {
     const content = e.target.anecdote.value
     this.props.anecdoteCreation(content)
     this.props.changeMessage(`anecdote '${content}' created`)
-    // this.props.store.dispatch(anecdoteCreation(content))
-    // this.props.store.dispatch(changeMessage(`anecdote '${content}' created`))
+    setTimeout(() => {
+      this.props.deleteMessage()
+    }, 5000)
     e.target.anecdote.value = ''
   }
   render() {
@@ -29,10 +30,10 @@ class AnecdoteForm extends React.Component {
 //Propsit täältä
 const mapDispatchToProps = {
   anecdoteCreation,
-  changeMessage
+  changeMessage,
+  deleteMessage
 }
 
 //mapStateToPropsia ei tarvita ---> null tilalle
 const ConnectedAnecdoteForm = connect(null, mapDispatchToProps)(AnecdoteForm)
 export default ConnectedAnecdoteForm
-// export default AnecdoteForm
