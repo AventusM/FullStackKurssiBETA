@@ -35,5 +35,10 @@ const mapDispatchToProps = {
 }
 
 //mapStateToPropsia ei tarvita ---> null tilalle
-const ConnectedAnecdoteForm = connect(null, mapDispatchToProps)(AnecdoteForm)
-export default ConnectedAnecdoteForm
+//1. param mapStateToProps
+//2. param mapDispatchToProps
+//Sulut erikseen (mihin komponenttiin otetaan yhteys, joka voi viitata edellisiin propseilla)
+//Nyt ei tarvitse mennä App.js:n kautta (this.props.store.getState(). . .)
+//index.js:ssä Providerin TULEE SISÄLTÄÄ App
+export default connect(null, mapDispatchToProps)(AnecdoteForm)
+//Nyt App.js:n import näyttää järkevämmältä...
