@@ -1,9 +1,13 @@
 import React from 'react'
+import { message } from './../reducers/messageReducer'
+import { connect } from 'react-redux'
 
 class Notification extends React.Component {
   render() {
-    const isNull = this.props.store.getState().message === null
-    console.log('kutsu Notification - luokan sisältä: ', this.props.store.getState().message)
+    const { message } = this.props
+    const isNull = message === null
+    // const isNull = this.props.store.getState().message === null
+    // console.log('kutsu Notification - luokan sisältä: ', this.props.store.getState().message)
     const style = {
       border: 'solid',
       padding: 10,
@@ -14,11 +18,18 @@ class Notification extends React.Component {
         {isNull
           ? <p></p>
           : <div style={style}>
-            {this.props.store.getState().message}
+            {message}
           </div>}
       </div>
     )
   }
 }
 
-export default Notification
+const mapDispatchToProps = (state) => {
+  return {
+    message: state.message
+  }
+}
+const ConnectedNotification = connect(mapDispatchToProps)(Notification)
+export default ConnectedNotification
+// export default Notification

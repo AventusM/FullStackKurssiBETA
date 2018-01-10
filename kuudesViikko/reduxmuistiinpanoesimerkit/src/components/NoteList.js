@@ -1,27 +1,39 @@
 import React from 'react'
 import { importanceToggling } from './../reducers/noteReducer'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 class NoteList extends React.Component {
-  componentDidMount() {
-    const { store } = this.context;
-    this.unsubscribe = store.subscribe(() =>
-      this.forceUpdate()
-    )
-  }
+  //Propsit --> mount/unmount tarpeettomia
 
-  componentWillUnmount() {
-    this.unsubscribe()
-  }
+  // componentDidMount() {
+  //   const { store } = this.context;
+  //   this.unsubscribe = store.subscribe(() =>
+  //     this.forceUpdate()
+  //   )
+  // }
+
+  // componentWillUnmount() {
+  //   this.unsubscribe()
+  // }
 
   toggleImportance = (id) => (e) => {
     e.preventDefault()
-    this.context.store.dispatch(importanceToggling(id))
+    //mapDispatchToProps --> erillinen 'dispatch' ei enää tarpeellinen connectin kanssa
+    //HUOM VIITATAAN PROPSIEN KAUTTA
+    //EI suoraan 'importanceToggling(id)
+    this.props.importanceToggling(id)
+    // this.context.store.dispatch(importanceToggling(id))
   }
   render() {
     const notesToShow = () => {
-      const notes = this.context.store.getState().notes
-      const filter = this.context.store.getState().filter
+      // const notes = this.props.notes
+      // const filter = this.props.filter
+      // const notes = this.context.store.getState().notes
+      // const filter = this.context.store.getState().filter
+
+      //mapStateToProps --> propsit saadaan suoraan täältä connectin kautta
+      const { notes, filter } = this.props
       if (filter === 'ALL') {
         return notes
       }
@@ -57,4 +69,17 @@ const Note = ({ note, handleClick }) => {
   )
 }
 
-export default NoteList
+const mapStateToProps = (state) => {
+  return {
+    notes: state.notes,
+    filter: state.filter
+  }
+}
+
+const mapDispatchToProps = {
+  importanceToggling
+}
+//Connectin ekoihin sulkuihin parametrit sisään
+const ConnectedNoteList = connect(mapStateToProps, mapDispatchToProps)(NoteList)
+// export default NoteList
+export default ConnectedNoteList
