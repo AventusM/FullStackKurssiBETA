@@ -1,5 +1,5 @@
 const messageReducer = (state = null, action) => {
-  console.log('ACTION: ' + action)
+  // console.log('ACTION: ' + action)
   switch (action.type) {
     case 'NEW_MESSAGE':
       return action.message

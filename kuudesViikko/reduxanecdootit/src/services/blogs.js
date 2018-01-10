@@ -6,4 +6,9 @@ const getAllBlogs = async () => {
   return res.data
 }
 
-export default { getAllBlogs }
+const createNewBlog = async (content) => {
+  const res = await axios.post(url, { content, votes: 0 })
+  return res.data
+}
+
+export default { getAllBlogs, createNewBlog }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { upvoting } from './../reducers/anecdoteReducer'
+import { upvoting, anecdoteCreation } from './../reducers/anecdoteReducer'
 import { changeMessage, deleteMessage } from './../reducers/messageReducer'
 import { connect } from 'react-redux'
 
@@ -37,6 +37,7 @@ class AnecdoteList extends React.Component {
 
 const anecdotesToShow = (anecdotes, filter) => {
   const filterValue = filter
+  console.log('anekdootit', anecdotes)
   return anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filterValue.toLowerCase()))
 }
 
