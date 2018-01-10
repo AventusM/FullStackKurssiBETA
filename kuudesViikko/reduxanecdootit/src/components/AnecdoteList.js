@@ -4,12 +4,13 @@ import { changeMessage, deleteMessage } from './../reducers/messageReducer'
 
 class AnecdoteList extends React.Component {
   render() {
-    //Combined reducer --> vaihtoehtoja nyt anecdotes ja message
+    //Combined reducer --> vaihtoehtoja nyt anecdotes ja message (uutena myös filter)
+    const filterValue = this.props.store.getState().filter
     const anecdotes = this.props.store.getState().anecdotes
+    const anecdotesToShow = anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filterValue.toLowerCase()))
     return (
       <div>
-        <h2>Anecdotes</h2>
-        {anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
+        {anecdotesToShow.sort((a, b) => b.votes - a.votes).map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
