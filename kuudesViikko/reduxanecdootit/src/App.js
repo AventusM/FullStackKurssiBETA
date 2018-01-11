@@ -8,10 +8,11 @@ import { anecdoteInitialization } from './reducers/anecdoteReducer'
 import anecdoteService from './services/anecdotes'
 
 class App extends React.Component {
-  componentWillMount = async () => {
-    const foundAnecdotes = await anecdoteService.getAllAnecdotes()
-    console.log('Löydetyt anekdootit', foundAnecdotes)
-    this.props.anecdoteInitialization(foundAnecdotes)
+  componentWillMount = () => {
+    this.props.anecdoteInitialization()
+    // const foundAnecdotes = await anecdoteService.getAllAnecdotes()
+    // console.log('Löydetyt anekdootit', foundAnecdotes)
+    // this.props.anecdoteInitialization(foundAnecdotes)
   }
 
   render() {

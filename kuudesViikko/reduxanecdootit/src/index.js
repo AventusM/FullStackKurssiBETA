@@ -7,6 +7,7 @@ import App from './App';
 import anecdoteReducer from './reducers/anecdoteReducer'
 import messageReducer from './reducers/messageReducer'
 import filterReducer from './reducers/filterReducer'
+import { composeWithDevTools } from 'redux-devtools-extension'
 
 const reducer = combineReducers({
   anecdotes: anecdoteReducer,
@@ -14,7 +15,12 @@ const reducer = combineReducers({
   filter: filterReducer
 })
 
-const store = createStore(reducer, applyMiddleware(thunk))
+const store = createStore(
+  reducer,
+  composeWithDevTools(
+    applyMiddleware(thunk)
+  )
+)
 
 const render = () => {
   ReactDOM.render(

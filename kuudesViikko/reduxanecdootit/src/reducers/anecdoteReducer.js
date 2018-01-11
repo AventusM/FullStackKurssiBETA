@@ -1,15 +1,13 @@
+import anecdoteService from '../services/anecdotes'
+
 const anecdoteReducer = (state = [], action) => {
   // console.log('ACTION:', action)
   switch (action.type) {
     case 'INITIALIZE':
       return action.data
     case 'CREATE':
-      // console.log('anecdoteReducerin sisällä --> ', action.data)
       return [...state, action.data] // Palvelimelta haku --> action.data järkevämpi
     case 'VOTE':
-      // console.log('param action', action)
-      // console.log('param action id', action.data.id)
-      // console.log(state.map(alkio => alkio.id))
       const filteredState = state.filter(alkio => alkio.id !== action.data.id)
       return [...filteredState, action.data]
     default:
@@ -40,10 +38,20 @@ export const upvoting = (data) => {
   }
 }
 
-export const anecdoteInitialization = (data) => {
-  return {
-    type: 'INITIALIZE',
-    data //res.data GET
+// export const anecdoteInitialization = (data) => {
+//   return {
+//     type: 'INITIALIZE',
+//     data //res.data GET
+//   }
+// }
+
+export const anecdoteInitialization = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAllAnecdotes()
+    dispatch({
+      type: 'INITIALIZE',
+      data: anecdotes
+    })
   }
 }
 

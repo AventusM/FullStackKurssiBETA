@@ -24,11 +24,11 @@ class AnecdoteList extends React.Component {
                   // console.log(await anecdoteService.getAllAnecdotes())
                   const upvotedAnecdote = await anecdoteService.updateExistingAnecdote(anecdote.id, anecdote)
                   // console.log(upvotedAnecdote)
-                  await this.props.upvoting(upvotedAnecdote)
+                  this.props.upvoting(upvotedAnecdote)
                   // console.log(await anecdoteService.getAllAnecdotes())
                   // console.log('anecdote after upvote', upvotedAnecdote)
                   // this.props.upvoting(upvotedAnecdote)
-                  await this.props.changeMessage(`you voted for '${anecdote.content}'`);
+                  this.props.changeMessage(`you voted for '${anecdote.content}'`);
                   setTimeout(() => {
                     this.props.deleteMessage()
                   }, 5000) // Kaikki tämä tapahtuu PER yksi onclick eli sen spämmääminen aiheuttaa mielenkiintoisen tilanteen (reset aina 5 sekunnin välein --> viimeisin tapahtuma ei välttämättä näy pitkään)
