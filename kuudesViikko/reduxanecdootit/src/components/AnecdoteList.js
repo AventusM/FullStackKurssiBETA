@@ -20,9 +20,15 @@ class AnecdoteList extends React.Component {
                 {/* https://stackoverflow.com/questions/26069238/call-multiple-functions-onclick-reactjs?answertab=votes#tab-top */}
                 {/* https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout?answertab=votes#tab-top */}
                 <button onClick={async () => {
+                  // console.log('anecdote before upvote', anecdote)
+                  // console.log(await anecdoteService.getAllAnecdotes())
                   const upvotedAnecdote = await anecdoteService.updateExistingAnecdote(anecdote.id, anecdote)
-                  this.props.upvoting(upvotedAnecdote)
-                  this.props.changeMessage(`you voted for '${anecdote.content}'`);
+                  // console.log(upvotedAnecdote)
+                  await this.props.upvoting(upvotedAnecdote)
+                  // console.log(await anecdoteService.getAllAnecdotes())
+                  // console.log('anecdote after upvote', upvotedAnecdote)
+                  // this.props.upvoting(upvotedAnecdote)
+                  await this.props.changeMessage(`you voted for '${anecdote.content}'`);
                   setTimeout(() => {
                     this.props.deleteMessage()
                   }, 5000) // Kaikki tämä tapahtuu PER yksi onclick eli sen spämmääminen aiheuttaa mielenkiintoisen tilanteen (reset aina 5 sekunnin välein --> viimeisin tapahtuma ei välttämättä näy pitkään)
@@ -39,7 +45,7 @@ class AnecdoteList extends React.Component {
 
 const anecdotesToShow = (anecdotes, filter) => {
   const filterValue = filter
-  console.log('anekdootit', anecdotes)
+  // console.log('anekdootit', anecdotes)
   return anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filterValue.toLowerCase()))
 }
 

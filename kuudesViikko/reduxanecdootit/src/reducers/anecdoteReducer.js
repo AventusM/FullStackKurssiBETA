@@ -7,9 +7,11 @@ const anecdoteReducer = (state = [], action) => {
       // console.log('anecdoteReducerin sisällä --> ', action.data)
       return [...state, action.data] // Palvelimelta haku --> action.data järkevämpi
     case 'VOTE':
-      const old = state.filter(a => a.id !== action.id)
-      const voted = state.find(a => a.id === action.id)
-      return [...old, action.data]
+      // console.log('param action', action)
+      // console.log('param action id', action.data.id)
+      // console.log(state.map(alkio => alkio.id))
+      const filteredState = state.filter(alkio => alkio.id !== action.data.id)
+      return [...filteredState, action.data]
     default:
       return state
   }
