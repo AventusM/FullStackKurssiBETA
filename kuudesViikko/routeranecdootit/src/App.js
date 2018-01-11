@@ -5,10 +5,25 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote =>
+        <li key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
+      )}
     </ul>
   </div>
 )
+
+const Anecdote = ({ anecdote }) => {
+  return (
+    <div>
+      <br />
+      <q>{anecdote.content}</q> by {anecdote.author}
+      <br />
+      {anecdote.votes} votes
+    </div>
+  )
+}
 
 const About = () => (
   <div>
@@ -64,15 +79,15 @@ class CreateNew extends React.Component {
         <form onSubmit={this.handleSubmit}>
           <div>
             content
-            <input name='content' value={this.state.content} onChange={this.handleChange} />
+            <input name='content' value={this.state.content} onChange={this.handleChange} required />
           </div>
           <div>
             author
-            <input name='author' value={this.state.author} onChange={this.handleChange} />
+            <input name='author' value={this.state.author} onChange={this.handleChange} required />
           </div>
           <div>
             url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} />
+            <input name='info' value={this.state.info} onChange={this.handleChange} required />
           </div>
           <button>create</button>
         </form>
@@ -108,7 +123,7 @@ class App extends React.Component {
   }
 
   addNew = (anecdote) => {
-    anecdote.id = (Math.random() * 10000).toFixed(0)
+    anecdote.id = Number((Math.random() * 10000).toFixed(0))
     this.setState({ anecdotes: this.state.anecdotes.concat(anecdote) })
   }
 
@@ -129,17 +144,23 @@ class App extends React.Component {
   }
 
   render() {
+    console.log(this.state.anecdotes)
+    const anecdoteById = (id) => {
+      console.log(id)
+      return this.state.anecdotes.find(anecdote => anecdote.id === Number(id))
+    }
     return (
       <div>
         <h1>Software anecdotes</h1>
-        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} />
+        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} />
+        <hr />
         <Footer />
       </div>
     );
   }
 }
 
-const Menu = ({ anecdotes, addNew }) => (
+const Menu = ({ anecdotes, addNew, matcher }) => (
   <div>
     <BrowserRouter>
       <div>
@@ -149,6 +170,7 @@ const Menu = ({ anecdotes, addNew }) => (
         <Link to="/about">about</Link>
         </div>
         <Route exact path="/" render={() => <AnecdoteList anecdotes={anecdotes} />} />
+        <Route exact path="/anecdotes/:id" render={({ match }) => <Anecdote anecdote={matcher(match.params.id)} />} />
         <Route path="/about" render={() => <About />} />
         <Route path="/create" render={() => <CreateNew addNew={addNew} />} />
       </div>
