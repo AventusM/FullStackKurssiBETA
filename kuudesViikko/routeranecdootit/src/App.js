@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Route, Link, Redirect } from 'react-router-dom'
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
@@ -17,10 +17,9 @@ const AnecdoteList = ({ anecdotes }) => (
 const Anecdote = ({ anecdote }) => {
   return (
     <div>
-      <br />
-      <q>{anecdote.content}</q> by {anecdote.author}
-      <br />
-      {anecdote.votes} votes
+      <h2>{anecdote.content} by {anecdote.author}</h2>
+      <p>has {anecdote.votes} votes</p>
+      <p>for more info see <a href={anecdote.info}>{anecdote.info}</a></p>
     </div>
   )
 }
@@ -53,7 +52,8 @@ class CreateNew extends React.Component {
     this.state = {
       content: '',
       author: '',
-      info: ''
+      info: '',
+      redirectToAnecdotes: false
     }
   }
 
@@ -68,11 +68,15 @@ class CreateNew extends React.Component {
       content: this.state.content,
       author: this.state.author,
       info: this.state.info,
-      votes: 0
+      votes: 0,
     })
+    this.setState({ redirectToAnecdotes: true })
   }
 
   render() {
+    if (this.state.redirectToAnecdotes) {
+      return <Redirect to="/" /> //Redirect --> createn uudelleenhaku lähtee kokonaan uudelleen liikkeelle
+    }
     return (
       <div>
         <h2>create a new anecdote</h2>
@@ -124,7 +128,13 @@ class App extends React.Component {
 
   addNew = (anecdote) => {
     anecdote.id = Number((Math.random() * 10000).toFixed(0))
-    this.setState({ anecdotes: this.state.anecdotes.concat(anecdote) })
+    this.setState({
+      anecdotes: this.state.anecdotes.concat(anecdote),
+      notification: `a new anecdote ${anecdote.content} has been created!`
+    })
+    setTimeout(() => {
+      this.setState({ notification: '' })
+    }, 10000)
   }
 
   anecdoteById = (id) =>
@@ -152,7 +162,7 @@ class App extends React.Component {
     return (
       <div>
         <h1>Software anecdotes</h1>
-        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} />
+        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} />
         <hr />
         <Footer />
       </div>
@@ -160,7 +170,7 @@ class App extends React.Component {
   }
 }
 
-const Menu = ({ anecdotes, addNew, matcher }) => (
+const Menu = ({ anecdotes, addNew, matcher, notification }) => (
   <div>
     <BrowserRouter>
       <div>
@@ -169,6 +179,9 @@ const Menu = ({ anecdotes, addNew, matcher }) => (
         <Link to="/create">create new</Link>&nbsp;
         <Link to="/about">about</Link>
         </div>
+        {/* Voi laittaa ternaryna tms... */}
+        <div>{notification}</div>
+        {/* Notifikaatio diviin CSS:ää varten */}
         <Route exact path="/" render={() => <AnecdoteList anecdotes={anecdotes} />} />
         <Route exact path="/anecdotes/:id" render={({ match }) => <Anecdote anecdote={matcher(match.params.id)} />} />
         <Route path="/about" render={() => <About />} />
