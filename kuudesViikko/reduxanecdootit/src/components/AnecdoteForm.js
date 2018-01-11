@@ -9,9 +9,10 @@ class AnecdoteForm extends React.Component {
     e.preventDefault()
     const content = e.target.anecdote.value
     e.target.anecdote.value = '' // SIIRRETTÄVÄ TÄNNE ALHAALTA NULLIN VÄLTTÄMISEKSI
-    const anecdoteFromPost = await anecdoteService.createNewAnecdote(content) // return res.data
-    console.log('res.data POSTista ', anecdoteFromPost)
-    this.props.anecdoteCreation(anecdoteFromPost) // res.data
+    this.props.anecdoteCreation(content) //Teht 112
+    // const anecdoteFromPost = await anecdoteService.createNewAnecdote(content) // return res.data
+    // console.log('res.data POSTista ', anecdoteFromPost)
+    // this.props.anecdoteCreation(anecdoteFromPost) // res.data
     this.props.changeMessage(`anecdote '${content}' created`)
     setTimeout(() => {
       this.props.deleteMessage()
@@ -31,6 +32,7 @@ class AnecdoteForm extends React.Component {
 }
 
 //Propsit täältä
+//Dispatch myös täältä, siksi näyttää hassulta kun sitä ei löydy suoraan
 const mapDispatchToProps = {
   anecdoteCreation,
   changeMessage,

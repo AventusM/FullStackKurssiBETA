@@ -5,6 +5,17 @@ import { connect } from 'react-redux'
 import anecdoteService from '../services/anecdotes'
 
 class AnecdoteList extends React.Component {
+  //Siirto onclickistä aiheutti melkoisen autopäivitysbugin joka jumitti chromen kokonaan..
+  handleLike = (anecdote) => async (e) => {
+    e.preventDefault()
+    // const upvotedAnecdote = await anecdoteService.updateExistingAnecdote(anecdote.id, anecdote)
+    this.props.upvoting(anecdote.id, anecdote)
+    this.props.changeMessage(`you voted for '${anecdote.content}'`);
+    setTimeout(() => {
+      this.props.deleteMessage()
+    }, 5000)
+  }
+
   render() {
     return (
       <div>
@@ -19,20 +30,7 @@ class AnecdoteList extends React.Component {
                 has {anecdote.votes}
                 {/* https://stackoverflow.com/questions/26069238/call-multiple-functions-onclick-reactjs?answertab=votes#tab-top */}
                 {/* https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout?answertab=votes#tab-top */}
-                <button onClick={async () => {
-                  // console.log('anecdote before upvote', anecdote)
-                  // console.log(await anecdoteService.getAllAnecdotes())
-                  const upvotedAnecdote = await anecdoteService.updateExistingAnecdote(anecdote.id, anecdote)
-                  // console.log(upvotedAnecdote)
-                  this.props.upvoting(upvotedAnecdote)
-                  // console.log(await anecdoteService.getAllAnecdotes())
-                  // console.log('anecdote after upvote', upvotedAnecdote)
-                  // this.props.upvoting(upvotedAnecdote)
-                  this.props.changeMessage(`you voted for '${anecdote.content}'`);
-                  setTimeout(() => {
-                    this.props.deleteMessage()
-                  }, 5000) // Kaikki tämä tapahtuu PER yksi onclick eli sen spämmääminen aiheuttaa mielenkiintoisen tilanteen (reset aina 5 sekunnin välein --> viimeisin tapahtuma ei välttämättä näy pitkään)
-                }}>
+                <button onClick={this.handleLike(anecdote)}>
                   vote
               </button>
               </div>
