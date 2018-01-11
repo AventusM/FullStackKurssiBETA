@@ -5,13 +5,13 @@ import AnecdoteList from './components/AnecdoteList'
 import Filter from './components/Filter'
 import { connect } from 'react-redux'
 import { anecdoteInitialization } from './reducers/anecdoteReducer'
-import blogService from './services/blogs'
+import anecdoteService from './services/anecdotes'
 
 class App extends React.Component {
   componentWillMount = async () => {
-    const foundBlogs = await blogService.getAllBlogs()
-    console.log('Löydetyt blogit', foundBlogs)
-    this.props.anecdoteInitialization(foundBlogs)
+    const foundAnecdotes = await anecdoteService.getAllAnecdotes()
+    console.log('Löydetyt anekdootit', foundAnecdotes)
+    this.props.anecdoteInitialization(foundAnecdotes)
   }
 
   render() {

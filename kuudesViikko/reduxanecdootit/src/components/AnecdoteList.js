@@ -2,6 +2,7 @@ import React from 'react'
 import { upvoting, anecdoteCreation } from './../reducers/anecdoteReducer'
 import { changeMessage, deleteMessage } from './../reducers/messageReducer'
 import { connect } from 'react-redux'
+import anecdoteService from '../services/anecdotes'
 
 class AnecdoteList extends React.Component {
   render() {
@@ -18,8 +19,9 @@ class AnecdoteList extends React.Component {
                 has {anecdote.votes}
                 {/* https://stackoverflow.com/questions/26069238/call-multiple-functions-onclick-reactjs?answertab=votes#tab-top */}
                 {/* https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout?answertab=votes#tab-top */}
-                <button onClick={() => {
-                  this.props.upvoting(anecdote.id);
+                <button onClick={async () => {
+                  const upvotedAnecdote = await anecdoteService.updateExistingAnecdote(anecdote.id, anecdote)
+                  this.props.upvoting(upvotedAnecdote)
                   this.props.changeMessage(`you voted for '${anecdote.content}'`);
                   setTimeout(() => {
                     this.props.deleteMessage()
