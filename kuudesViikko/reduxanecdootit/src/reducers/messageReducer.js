@@ -10,16 +10,31 @@ const messageReducer = (state = null, action) => {
   }
 }
 
-export const changeMessage = (message) => {
-  return {
-    type: 'NEW_MESSAGE',
-    message
-  }
-}
+// export const changeMessage = (message) => {
+//   return {
+//     type: 'NEW_MESSAGE',
+//     message
+//   }
+// }
 
-export const deleteMessage = () => {
-  return {
-    type: 'DELETE_MESSAGE'
+// export const deleteMessage = () => {
+//   return {
+//     type: 'DELETE_MESSAGE'
+//   }
+// }
+
+//Kokeilun kautta voittoon...
+export const notify = (message, timer) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'NEW_MESSAGE',
+      message,
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'DELETE_MESSAGE'
+      })
+    }, timer * 1000)
   }
 }
 

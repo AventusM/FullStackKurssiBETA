@@ -1,6 +1,6 @@
 import React from 'react'
 import { upvoting, anecdoteCreation } from './../reducers/anecdoteReducer'
-import { changeMessage, deleteMessage } from './../reducers/messageReducer'
+import { notify } from './../reducers/messageReducer'
 import { connect } from 'react-redux'
 import anecdoteService from '../services/anecdotes'
 
@@ -8,12 +8,8 @@ class AnecdoteList extends React.Component {
   //Siirto onclickistä aiheutti melkoisen autopäivitysbugin joka jumitti chromen kokonaan..
   handleLike = (anecdote) => async (e) => {
     e.preventDefault()
-    // const upvotedAnecdote = await anecdoteService.updateExistingAnecdote(anecdote.id, anecdote)
     this.props.upvoting(anecdote.id, anecdote)
-    this.props.changeMessage(`you voted for '${anecdote.content}'`);
-    setTimeout(() => {
-      this.props.deleteMessage()
-    }, 5000)
+    this.props.notify(`you voted for '${anecdote.content}'`, 5)
   }
 
   render() {
@@ -55,8 +51,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   upvoting,
-  changeMessage,
-  deleteMessage
+  notify
 }
 
 const ConnectedAnecdoteList = connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)

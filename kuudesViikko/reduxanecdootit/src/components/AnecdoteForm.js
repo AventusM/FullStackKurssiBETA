@@ -1,6 +1,6 @@
 import React from 'react'
 import { anecdoteCreation } from './../reducers/anecdoteReducer'
-import { changeMessage, deleteMessage } from './../reducers/messageReducer'
+import { notify } from './../reducers/messageReducer'
 import { connect } from 'react-redux'
 import anecdoteService from '../services/anecdotes'
 
@@ -13,10 +13,7 @@ class AnecdoteForm extends React.Component {
     // const anecdoteFromPost = await anecdoteService.createNewAnecdote(content) // return res.data
     // console.log('res.data POSTista ', anecdoteFromPost)
     // this.props.anecdoteCreation(anecdoteFromPost) // res.data
-    this.props.changeMessage(`anecdote '${content}' created`)
-    setTimeout(() => {
-      this.props.deleteMessage()
-    }, 5000)
+    this.props.notify(`anecdote '${content}' created`, 5)
   }
   render() {
     return (
@@ -32,11 +29,10 @@ class AnecdoteForm extends React.Component {
 }
 
 //Propsit täältä
-//Dispatch myös täältä, siksi näyttää hassulta kun sitä ei löydy suoraan
+//Dispatch myös täältä, siksi näyttää hassulta kun sitä ei löydy suoraan (jos siis ei redux-thunk versio)
 const mapDispatchToProps = {
   anecdoteCreation,
-  changeMessage,
-  deleteMessage
+  notify
 }
 
 //mapStateToPropsia ei tarvita ---> null tilalle
