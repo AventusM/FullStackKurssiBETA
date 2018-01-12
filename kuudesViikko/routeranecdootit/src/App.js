@@ -1,16 +1,17 @@
 import React from 'react'
-import { BrowserRouter, Route, NavLink, Redirect } from 'react-router-dom'
+import { BrowserRouter, Route, Link, NavLink, Redirect } from 'react-router-dom'
+import { ListGroup, ListGroupItem } from 'react-bootstrap'
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
+    <ListGroup>
       {anecdotes.map(anecdote =>
-        <li key={anecdote.id} >
-          <NavLink to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</NavLink>
-        </li>
+        <ListGroupItem key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </ListGroupItem>
       )}
-    </ul>
+    </ListGroup>
   </div>
 )
 
@@ -170,7 +171,7 @@ class App extends React.Component {
         borderTop: '2px solid',
         borderRadius: '5px',
         padding: '10px',
-        width: '180px'
+        width: '205px'
       },
       activeNavLinkStyle: {
         fontWeight: 'bold',
@@ -185,7 +186,7 @@ class App extends React.Component {
       return this.state.anecdotes.find(anecdote => anecdote.id === Number(id))
     }
     return (
-      <div>
+      <div className="container">
         <h1>Software anecdotes</h1>
         <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} styles={styles} />
         <hr />
