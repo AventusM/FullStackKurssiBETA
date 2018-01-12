@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Route, Link, NavLink, Redirect } from 'react-router-dom'
-import { ListGroup, ListGroupItem } from 'react-bootstrap'
+import { ListGroup, ListGroupItem, Grid, Row, Col, ControlLabel, FormGroup, FormControl, Button } from 'react-bootstrap'
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
@@ -26,17 +26,24 @@ const Anecdote = ({ anecdote }) => {
 }
 
 const About = () => (
-  <div>
-    <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
+  <Grid>
+    <Row>
+      <Col lg={8}>
+        <h2>About anecdote app</h2>
+        <p>According to Wikipedia:</p>
 
-    <em>An anecdote is a brief, revealing account of an individual person or an incident.
+        <em>An anecdote is a brief, revealing account of an individual person or an incident.
       Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
       such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
       An anecdote is "a story with a point."</em>
 
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
-  </div>
+        <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+      </Col>
+      <Col>
+        <img src="images/linus.jpg" width={202} height={253} />
+      </Col>
+    </Row>
+  </Grid>
 )
 
 const Footer = () => (
@@ -82,19 +89,32 @@ class CreateNew extends React.Component {
       <div>
         <h2>create a new anecdote</h2>
         <form onSubmit={this.handleSubmit}>
-          <div>
-            content
-            <input name='content' value={this.state.content} onChange={this.handleChange} required />
-          </div>
-          <div>
-            author
-            <input name='author' value={this.state.author} onChange={this.handleChange} required />
-          </div>
-          <div>
-            url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} required />
-          </div>
-          <button>create</button>
+          <FormGroup>
+            <Row>
+              <Col lg={4}>
+                <ControlLabel>content </ControlLabel>
+                <FormControl name='content' value={this.state.content} onChange={this.handleChange} required />
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={4}>
+                <ControlLabel>author </ControlLabel>
+                <FormControl name='author' value={this.state.author} onChange={this.handleChange} required />
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={4}>
+                <ControlLabel>url for more info</ControlLabel>
+                <FormControl name='info' value={this.state.info} onChange={this.handleChange} required />
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={4}>
+                <br />
+                <Button bsStyle="success" type="submit">create</Button>
+              </Col>
+            </Row>
+          </FormGroup>
         </form>
       </div>
     )
@@ -162,7 +182,8 @@ class App extends React.Component {
         borderLeft: '5px solid',
         borderRadius: '4px',
         padding: '10px',
-        width: '500px'
+        width: '500px',
+        margin: '10px'
       },
       navBarStyle: {
         color: 'black',
@@ -171,7 +192,9 @@ class App extends React.Component {
         borderTop: '2px solid',
         borderRadius: '5px',
         padding: '10px',
-        width: '205px'
+        width: '205px',
+        marginLeft: 'auto',
+        marginRight: 'auto'
       },
       activeNavLinkStyle: {
         fontWeight: 'bold',
@@ -187,10 +210,12 @@ class App extends React.Component {
     }
     return (
       <div className="container">
-        <h1>Software anecdotes</h1>
+        <h1 className="text-center">Software anecdotes</h1>
         <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} styles={styles} />
         <hr />
-        <Footer />
+        <div className="text-center">
+          <Footer />
+        </div>
       </div>
     );
   }
