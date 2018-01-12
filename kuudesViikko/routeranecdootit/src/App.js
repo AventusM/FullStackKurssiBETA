@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Link, Redirect } from 'react-router-dom'
+import { BrowserRouter, Route, NavLink, Redirect } from 'react-router-dom'
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
@@ -7,7 +7,7 @@ const AnecdoteList = ({ anecdotes }) => (
     <ul>
       {anecdotes.map(anecdote =>
         <li key={anecdote.id} >
-          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+          <NavLink to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</NavLink>
         </li>
       )}
     </ul>
@@ -154,14 +154,30 @@ class App extends React.Component {
   }
 
   render() {
-    const notificationStyle = {
-      color: 'black',
-      backgroundColor: 'lightgrey',
-      borderLeft: '5px solid',
-      borderRadius: '4px',
-      padding: '10px',
-      width: '500px'
+    const styles = {
+      notificationStyle: {
+        color: 'black',
+        backgroundColor: 'lightgrey',
+        borderLeft: '5px solid',
+        borderRadius: '4px',
+        padding: '10px',
+        width: '500px'
+      },
+      navBarStyle: {
+        color: 'black',
+        backgroundColor: 'lightgrey',
+        borderBottom: '2px solid',
+        borderTop: '2px solid',
+        borderRadius: '5px',
+        padding: '10px',
+        width: '180px'
+      },
+      activeNavLinkStyle: {
+        fontWeight: 'bold',
+        color: 'white'
+      }
     }
+
 
     console.log(this.state.anecdotes)
     const anecdoteById = (id) => {
@@ -171,7 +187,7 @@ class App extends React.Component {
     return (
       <div>
         <h1>Software anecdotes</h1>
-        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} notificationStyle={notificationStyle} />
+        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} styles={styles} />
         <hr />
         <Footer />
       </div>
@@ -179,18 +195,18 @@ class App extends React.Component {
   }
 }
 
-const Menu = ({ anecdotes, addNew, matcher, notification, notificationStyle }) => (
+const Menu = ({ anecdotes, addNew, matcher, notification, styles }) => (
   <div>
     <BrowserRouter>
       <div>
-        <div>
-          <Link to="/">anecdotes</Link>&nbsp;
-        <Link to="/create">create new</Link>&nbsp;
-        <Link to="/about">about</Link>
+        <div style={styles.navBarStyle}>
+          <NavLink activeStyle={styles.activeNavLinkStyle} exact to="/">anecdotes</NavLink>&nbsp;
+        <NavLink activeStyle={styles.activeNavLinkStyle} exact to="/create">create new</NavLink>&nbsp;
+        <NavLink activeStyle={styles.activeNavLinkStyle} exact to="/about">about</NavLink>
         </div>
         {/* Voi laittaa ternaryna tms... */}
         {notification
-          ? <div style={notificationStyle}>{notification}</div>
+          ? <div style={styles.notificationStyle}>{notification}</div>
           : <p></p>}
         <Route exact path="/" render={() => <AnecdoteList anecdotes={anecdotes} />} />
         <Route exact path="/anecdotes/:id" render={({ match }) => <Anecdote anecdote={matcher(match.params.id)} />} />
