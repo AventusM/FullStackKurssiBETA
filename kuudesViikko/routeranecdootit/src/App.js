@@ -154,6 +154,15 @@ class App extends React.Component {
   }
 
   render() {
+    const notificationStyle = {
+      color: 'black',
+      backgroundColor: 'lightgrey',
+      borderLeft: '5px solid',
+      borderRadius: '4px',
+      padding: '10px',
+      width: '500px'
+    }
+
     console.log(this.state.anecdotes)
     const anecdoteById = (id) => {
       console.log(id)
@@ -162,7 +171,7 @@ class App extends React.Component {
     return (
       <div>
         <h1>Software anecdotes</h1>
-        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} />
+        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} notificationStyle={notificationStyle} />
         <hr />
         <Footer />
       </div>
@@ -170,7 +179,7 @@ class App extends React.Component {
   }
 }
 
-const Menu = ({ anecdotes, addNew, matcher, notification }) => (
+const Menu = ({ anecdotes, addNew, matcher, notification, notificationStyle }) => (
   <div>
     <BrowserRouter>
       <div>
@@ -180,8 +189,9 @@ const Menu = ({ anecdotes, addNew, matcher, notification }) => (
         <Link to="/about">about</Link>
         </div>
         {/* Voi laittaa ternaryna tms... */}
-        <div>{notification}</div>
-        {/* Notifikaatio diviin CSS:ää varten */}
+        {notification
+          ? <div style={notificationStyle}>{notification}</div>
+          : <p></p>}
         <Route exact path="/" render={() => <AnecdoteList anecdotes={anecdotes} />} />
         <Route exact path="/anecdotes/:id" render={({ match }) => <Anecdote anecdote={matcher(match.params.id)} />} />
         <Route path="/about" render={() => <About />} />
