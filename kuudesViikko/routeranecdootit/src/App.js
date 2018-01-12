@@ -15,11 +15,11 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 )
 
-const Anecdote = ({ anecdote }) => {
+const Anecdote = ({ anecdote, voteFunction }) => {
   return (
     <div>
       <h2>{anecdote.content} by {anecdote.author}</h2>
-      <p>has {anecdote.votes} votes</p>
+      <p>has {anecdote.votes} votes <Button bsStyle="success" bsSize="small" onClick={() => voteFunction(anecdote.id)}>vote</Button></p>
       <p>for more info see <a href={anecdote.info}>{anecdote.info}</a></p>
     </div>
   )
@@ -211,7 +211,7 @@ class App extends React.Component {
     return (
       <div className="container">
         <h1 className="text-center">Software anecdotes</h1>
-        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} matcher={anecdoteById} notification={this.state.notification} styles={styles} />
+        <Menu anecdotes={this.state.anecdotes} addNew={this.addNew} voteFunction={this.vote} matcher={anecdoteById} notification={this.state.notification} styles={styles} />
         <hr />
         <div className="text-center">
           <Footer />
@@ -221,7 +221,7 @@ class App extends React.Component {
   }
 }
 
-const Menu = ({ anecdotes, addNew, matcher, notification, styles }) => (
+const Menu = ({ anecdotes, addNew, voteFunction, matcher, notification, styles }) => (
   <div>
     <BrowserRouter>
       <div>
@@ -230,12 +230,11 @@ const Menu = ({ anecdotes, addNew, matcher, notification, styles }) => (
         <NavLink activeStyle={styles.activeNavLinkStyle} exact to="/create">create new</NavLink>&nbsp;
         <NavLink activeStyle={styles.activeNavLinkStyle} exact to="/about">about</NavLink>
         </div>
-        {/* Voi laittaa ternaryna tms... */}
         {notification
           ? <div style={styles.notificationStyle}>{notification}</div>
           : <p></p>}
         <Route exact path="/" render={() => <AnecdoteList anecdotes={anecdotes} />} />
-        <Route exact path="/anecdotes/:id" render={({ match }) => <Anecdote anecdote={matcher(match.params.id)} />} />
+        <Route exact path="/anecdotes/:id" render={({ match }) => <Anecdote anecdote={matcher(match.params.id)} voteFunction={voteFunction} />} />
         <Route path="/about" render={() => <About />} />
         <Route path="/create" render={() => <CreateNew addNew={addNew} />} />
       </div>
