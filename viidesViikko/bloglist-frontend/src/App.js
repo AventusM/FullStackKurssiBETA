@@ -181,6 +181,7 @@ class App extends React.Component {
   }
 
   render() {
+    const userById = (id) => this.state.users.find(user => user.id === id)
 
     //Kokeillaan erotella täysin omana osanaan täällä
     const blogForm = () => (
@@ -222,7 +223,8 @@ class App extends React.Component {
         )}
         <BrowserRouter>
           <div>
-            <Route path="/users" render={() => <Users users={this.state.users} />} />
+            <Route exact path="/users/:id" render={({ match }) => <User user={userById(match.params.id)} />} />
+            <Route exact path="/users" render={() => <Users users={this.state.users} />} />
           </div>
         </BrowserRouter>
       </div>
@@ -230,9 +232,22 @@ class App extends React.Component {
   }
 }
 
+// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
+// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
+// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
+// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
 const User = ({ user }) => {
+  console.log(user)
   return (
-    <div></div>
+    <div>
+      <h2>{user.name}</h2>
+      <h3>Added blogs</h3>
+      <ul>
+        {user.blogs.map(blog =>
+          <li key={blog.id}>{blog.title}</li>
+        )}
+      </ul>
+    </div>
   )
 }
 
@@ -251,7 +266,9 @@ const Users = ({ users }) => {
         <tbody>
           {users.map(user =>
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
               <td>{user.blogs.length}</td>
             </tr>
           )}
