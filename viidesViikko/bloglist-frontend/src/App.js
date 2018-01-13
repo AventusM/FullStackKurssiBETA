@@ -2,6 +2,7 @@ import React from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import userService from './services/users'
 import { Togglable, TogglableDiv } from './components/Togglable'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -12,6 +13,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      users: [],
       blogs: [],
       username: '',
       pw: '',
@@ -29,6 +31,10 @@ class App extends React.Component {
     blogService.getAll().then(blogs => {
       const byId = (blog1, blog2) => blog1.likes < blog2.likes
       this.setState({ blogs: blogs.sort(byId) })
+    })
+    userService.getAll().then(users => {
+      // console.log(users)
+      this.setState({ users })
     })
     const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
     if (loggedInUserJSON) {
@@ -175,7 +181,6 @@ class App extends React.Component {
   }
 
   render() {
-    // console.log(this.state.user)
 
     //Kokeillaan erotella täysin omana osanaan täällä
     const blogForm = () => (
@@ -217,7 +222,7 @@ class App extends React.Component {
         )}
         <BrowserRouter>
           <div>
-            <Route path="/users" render={() => <Users blogs={this.state.blogs} />} />
+            <Route path="/users" render={() => <Users users={this.state.users} />} />
           </div>
         </BrowserRouter>
       </div>
@@ -225,19 +230,14 @@ class App extends React.Component {
   }
 }
 
-const Users = ({ blogs }) => {
-  //Mapataan blogit (blog.user.name)
-  const allOccurences = blogs.map(blog => blog.user.name)
-  const occurenceCounts = allOccurences.reduce((occurencesOfNames, name) => {
-    if (name in occurencesOfNames) {
-      occurencesOfNames[name]++
-    } else {
-      occurencesOfNames[name] = 1
-    }
-    return occurencesOfNames
-  }, [])
-  // 'HashMap' - tyylinen ratkaisu (uniikki taulu)
-  const uniqueUsers = new Set(allOccurences)
+const User = ({ user }) => {
+  return (
+    <div></div>
+  )
+}
+
+const Users = ({ users }) => {
+  console.log('Usersin sisällä', users)
   return (
     <div>
       <h2>users</h2>
@@ -249,12 +249,10 @@ const Users = ({ blogs }) => {
           </tr>
         </thead>
         <tbody>
-          {/* Muutetaan Set takaisin mapiksi object spreadilla */}
-          {/* https://stackoverflow.com/questions/33234666/how-to-map-reduce-filter-a-set-in-javascript?answertab=votes#tab-top */}
-          {[...uniqueUsers].map(user =>
-            <tr key={user}>
-              <td>{user}</td>
-              <td>{occurenceCounts[user]}</td>
+          {users.map(user =>
+            <tr key={user.id}>
+              <td>{user.name}</td>
+              <td>{user.blogs.length}</td>
             </tr>
           )}
         </tbody>
