@@ -6,6 +6,7 @@ import { Togglable, TogglableDiv } from './components/Togglable'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import { BrowserRouter, Route, Link } from 'react-router-dom'
 
 class App extends React.Component {
   constructor(props) {
@@ -192,13 +193,7 @@ class App extends React.Component {
     if (this.state.user === null) {
       return (
         <div>
-          <Notification error={this.state.error} msg={this.state.msg} />
-          <LoginForm
-            username={this.state.username}
-            password={this.state.password}
-            handleChange={this.handleFieldChange}
-            handleSubmit={this.login}
-          />
+          <Login username={this.state.username} password={this.state.password} handleChange={this.handleFieldChange} handleSubmit={this.login} errorMsg={this.state.error} successMsg={this.state.msg} />
         </div>
       )
     }
@@ -220,9 +215,66 @@ class App extends React.Component {
             <Blog key={blog._id} blog={blog} likeFunction={this.addLike} removeFunction={this.removeBlog} />
           </TogglableDiv>
         )}
+        <BrowserRouter>
+          <div>
+            <Route path="/users" render={() => <Users blogs={this.state.blogs} />} />
+          </div>
+        </BrowserRouter>
       </div>
-    );
+    )
   }
+}
+
+const Users = ({ blogs }) => {
+  //Mapataan blogit (blog.user.name)
+  const allOccurences = blogs.map(blog => blog.user.name)
+  const occurenceCounts = allOccurences.reduce((occurencesOfNames, name) => {
+    if (name in occurencesOfNames) {
+      occurencesOfNames[name]++
+    } else {
+      occurencesOfNames[name] = 1
+    }
+    return occurencesOfNames
+  }, [])
+  // 'HashMap' - tyylinen ratkaisu (uniikki taulu)
+  const uniqueUsers = new Set(allOccurences)
+  return (
+    <div>
+      <h2>users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>blogs added</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Muutetaan Set takaisin mapiksi object spreadilla */}
+          {/* https://stackoverflow.com/questions/33234666/how-to-map-reduce-filter-a-set-in-javascript?answertab=votes#tab-top */}
+          {[...uniqueUsers].map(user =>
+            <tr key={user}>
+              <td>{user}</td>
+              <td>{occurenceCounts[user]}</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+const Login = ({ username, password, handleChange, handleSubmit, errorMsg, successMsg }) => {
+  return (
+    <div>
+      <Notification error={errorMsg} msg={successMsg} />
+      <LoginForm
+        username={username}
+        password={password}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
+    </div>
+  )
 }
 
 export default App;
