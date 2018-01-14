@@ -33,13 +33,18 @@ class App extends React.Component {
       this.setState({ blogs: blogs.sort(byId) })
     })
     userService.getAll().then(users => {
-      // console.log(users)
+      window.localStorage.setItem('allUsers', JSON.stringify(users))
       this.setState({ users })
     })
     const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
+    const allUsers = window.localStorage.getItem('allUsers')
+    console.log(allUsers)
     if (loggedInUserJSON) {
       const acceptedUser = JSON.parse(loggedInUserJSON)
-      this.setState({ user: acceptedUser })
+      this.setState({
+        user: acceptedUser,
+        users: JSON.parse(allUsers)
+      })
       blogService.setToken(acceptedUser.signedToken)
     }
   }
@@ -68,6 +73,7 @@ class App extends React.Component {
   logout = async (event) => {
     event.preventDefault()
     try {
+      //Ehkä poistettava myös usertaulukko tms.
       window.localStorage.removeItem('loggedInUser')
       this.setState({ user: null })
     } catch (exception) {
