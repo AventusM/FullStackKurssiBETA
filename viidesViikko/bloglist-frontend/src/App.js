@@ -188,6 +188,7 @@ class App extends React.Component {
 
   render() {
     const userById = (id) => this.state.users.find(user => user.id === id)
+    const blogById = (id) => this.state.blogs.find(blog => blog.id === id)
 
     //Kokeillaan erotella täysin omana osanaan täällä
     const blogForm = () => (
@@ -212,7 +213,7 @@ class App extends React.Component {
 
     return (
       <div>
-        <h2>blogs</h2>
+        <h2>blog app</h2>
         <Notification error={this.state.error} msg={this.state.msg} />
         <div>
           {this.state.user.name} logged in
@@ -222,15 +223,12 @@ class App extends React.Component {
           <h2>create new</h2>
           {blogForm()}
         </div>
-        {this.state.blogs.map(blog =>
-          <TogglableDiv key={blog.id} title={blog.title} author={blog.author}>
-            <Blog key={blog._id} blog={blog} likeFunction={this.addLike} removeFunction={this.removeBlog} />
-          </TogglableDiv>
-        )}
         <BrowserRouter>
           <div>
             <Route exact path="/users/:id" render={({ match }) => <User user={userById(match.params.id)} />} />
             <Route exact path="/users" render={() => <Users users={this.state.users} />} />
+            <Route exact path="/blogs/:id" render={({ match }) => <Blog blog={blogById(match.params.id)} likeFunction={this.addLike} removeFunction={this.removeBlog} />} />
+            <Route exact path="/" render={() => <Blogs blogs={this.state.blogs} />} />
           </div>
         </BrowserRouter>
       </div>
@@ -238,10 +236,28 @@ class App extends React.Component {
   }
 }
 
-// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
-// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
-// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
-// TEHTÄVÄÄN 124 LOCALSTORAGEN PÄIVITYSTÄ
+
+
+const Blogs = ({ blogs }) => {
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
+  }
+  return (
+    <div>
+      {blogs.map(blog =>
+        <div style={blogStyle}>
+          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+        </div>
+      )}
+    </div>
+  )
+}
+
+
 const User = ({ user }) => {
   console.log(user)
   return (

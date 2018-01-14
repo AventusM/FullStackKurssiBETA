@@ -8,9 +8,10 @@ const Blog = (props) => {
   const match = addedByAnon ?
     false : // Tarkastelua ei lähdetä suorittamaan (satavarma error)
     blog.user.username === loggedInUser.username // Normaali tarkastelu
+
   return (
     <div>
-      {blog.title} {blog.author}
+      <h2>{blog.title} {blog.author}</h2>
       <div className="blogs">
         <div><a href={blog.url}>{blog.url}</a></div>
         <div>{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></div>
