@@ -9,7 +9,9 @@ const Blog = mongoose.model('Blog', {
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    //Anonyymit kommentit (taulukoitu)
+    comments: []
 })
 
 module.exports = Blog

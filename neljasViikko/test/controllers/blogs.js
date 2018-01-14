@@ -26,7 +26,8 @@ const formatBlog = (inputBlog) => {
         author: inputBlog.author,
         url: inputBlog.url,
         likes: inputBlog.likes,
-        user: inputBlog.user
+        user: inputBlog.user,
+        comments: inputBlog.comments
     }
 }
 
@@ -56,7 +57,8 @@ blogsRouter.post('/', async (req, res) => {
                 likes: body.likes || 0,
                 // haettu POST:lla
                 // inputBlog.user saadaan tästä
-                user: null
+                user: null,
+                comments: null
             })
             const savedBlog = await blog.save({})
             res.status(200).json(formatBlog(savedBlog))
@@ -89,7 +91,8 @@ blogsRouter.post('/', async (req, res) => {
             likes: body.likes || 0,
             // haettu POST:lla
             // inputBlog.user saadaan tästä
-            user: foundUser._id
+            user: foundUser._id,
+            comments: body.comments
         })
 
         const savedBlog = await blog.save({})
@@ -147,6 +150,20 @@ blogsRouter.put('/:id', async (req, res) => {
     } catch (exception) {
         console.log(exception)
         res.status(400).json({ error: 'something went wrong, try having a look at the id' })
+    }
+})
+
+blogsRouter.put('/:id/comments', async (req, res) => {
+    console.log('COMMENT PUT')
+    const body = req.body
+    try {
+        // console.log('blog before update comments', await Blog.findById(req.params.id))
+        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, { $set: { comments: blog.comments.concat(body.comment) } }, { upsert: true }, function (err, result) { })
+        // console.log('blog after update', await Blog.findById(req.params.id))
+        res.status(200).send(updatedBlog).end()
+    } catch (exception) {
+        console.log(exception)
+        res.status(400)
     }
 })
 

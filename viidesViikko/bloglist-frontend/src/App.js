@@ -7,7 +7,7 @@ import { Togglable, TogglableDiv } from './components/Togglable'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import { BrowserRouter, Route, Link, NavLink } from 'react-router-dom'
+import { BrowserRouter, Route, Link, NavLink, Redirect } from 'react-router-dom'
 
 class App extends React.Component {
   constructor(props) {
@@ -162,10 +162,6 @@ class App extends React.Component {
     }
   }
 
-
-  //Blogitaulukon manipulointi tapahtuu
-  //tässä komponentissa
-  //oikea muoto removeBlog = (id) => async(?) (event) => {...}
   removeBlog = (id) => async (event) => {
     event.preventDefault()
     event.stopPropagation()
@@ -180,7 +176,7 @@ class App extends React.Component {
         })
       }
 
-
+      <Redirect to="/" />
     } catch (exception) {
       console.log(exception)
     }
@@ -227,7 +223,11 @@ class App extends React.Component {
               {blogForm()}
               <Route exact path="/users/:id" render={({ match }) => <User user={userById(match.params.id)} />} />
               <Route exact path="/users" render={() => <Users users={this.state.users} />} />
-              <Route exact path="/blogs/:id" render={({ match }) => <Blog blog={blogById(match.params.id)} likeFunction={this.addLike} removeFunction={this.removeBlog} />} />
+              {/* Blogin poistoon liittyvä bugi korjattu -> redirect jos sitä ei ole enää olemassa */}
+              <Route exact path="/blogs/:id" render={({ match }) =>
+                blogById(match.params.id)
+                  ? <Blog blog={blogById(match.params.id)} likeFunction={this.addLike} removeFunction={this.removeBlog} />
+                  : <Redirect to="/" />} />
               <Route exact path="/" render={() => <Blogs blogs={this.state.blogs} />} />
             </div>
           </BrowserRouter>
@@ -266,7 +266,7 @@ const User = ({ user }) => {
       <h3>Added blogs</h3>
       <ul>
         {user.blogs.map(blog =>
-          <li key={blog.id}>{blog.title}</li>
+          <li key={blog.id}>{blog.title} by {blog.author}</li>
         )}
       </ul>
     </div>

@@ -18,9 +18,17 @@ const Blog = (props) => {
         {addedByAnon ?
           <div>added by anon</div> :
           <div>added by {blog.user.name}</div>}
-        {match || addedByAnon ?
-          <button onClick={removeFunction(blog.id)}>delete</button> :
-          <div></div>}
+        {match || addedByAnon
+          ? <button onClick={removeFunction(blog.id)}>delete</button>
+          : <div></div>}
+      </div>
+      <div>
+        <h3>comments</h3>
+        <ul>
+          {blog.comments.map(comment =>
+            <li>{comment}</li>
+          )}
+        </ul>
       </div>
     </div>
   )
