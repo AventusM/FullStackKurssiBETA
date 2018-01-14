@@ -7,7 +7,7 @@ import { Togglable, TogglableDiv } from './components/Togglable'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import { BrowserRouter, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Route, Link, NavLink } from 'react-router-dom'
 
 class App extends React.Component {
   constructor(props) {
@@ -192,7 +192,7 @@ class App extends React.Component {
 
     //Kokeillaan erotella täysin omana osanaan täällä
     const blogForm = () => (
-      <Togglable buttonLabel="new blog" ref={component => this.blogForm = component}>
+      <Togglable buttonLabel="create new blog" ref={component => this.blogForm = component}>
         <BlogForm
           titleFieldValue={this.state.title}
           authorFieldValue={this.state.author}
@@ -216,27 +216,26 @@ class App extends React.Component {
         <h2>blog app</h2>
         <Notification error={this.state.error} msg={this.state.msg} />
         <div>
-          {this.state.user.name} logged in
-          <button onClick={this.logout}>logout</button>
+          <BrowserRouter>
+            <div>
+              {/* Voidaan tarvittaessa lisätä paddingia erottelua varten */}
+              <div>
+                <NavLink exact to="/">blogs</NavLink>&nbsp;
+                <NavLink exact to="/users">users</NavLink>&nbsp;
+                <i>{this.state.user.name} logged in</i>&nbsp;<button onClick={this.logout}>logout</button>
+              </div>
+              {blogForm()}
+              <Route exact path="/users/:id" render={({ match }) => <User user={userById(match.params.id)} />} />
+              <Route exact path="/users" render={() => <Users users={this.state.users} />} />
+              <Route exact path="/blogs/:id" render={({ match }) => <Blog blog={blogById(match.params.id)} likeFunction={this.addLike} removeFunction={this.removeBlog} />} />
+              <Route exact path="/" render={() => <Blogs blogs={this.state.blogs} />} />
+            </div>
+          </BrowserRouter>
         </div>
-        <div>
-          <h2>create new</h2>
-          {blogForm()}
-        </div>
-        <BrowserRouter>
-          <div>
-            <Route exact path="/users/:id" render={({ match }) => <User user={userById(match.params.id)} />} />
-            <Route exact path="/users" render={() => <Users users={this.state.users} />} />
-            <Route exact path="/blogs/:id" render={({ match }) => <Blog blog={blogById(match.params.id)} likeFunction={this.addLike} removeFunction={this.removeBlog} />} />
-            <Route exact path="/" render={() => <Blogs blogs={this.state.blogs} />} />
-          </div>
-        </BrowserRouter>
-      </div>
+      </div >
     )
   }
 }
-
-
 
 const Blogs = ({ blogs }) => {
   const blogStyle = {
@@ -248,6 +247,7 @@ const Blogs = ({ blogs }) => {
   }
   return (
     <div>
+      <h2>blogs</h2>
       {blogs.map(blog =>
         <div style={blogStyle}>
           <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
