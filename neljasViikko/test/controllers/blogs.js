@@ -58,7 +58,7 @@ blogsRouter.post('/', async (req, res) => {
                 // haettu POST:lla
                 // inputBlog.user saadaan tästä
                 user: null,
-                comments: null
+                comments: []
             })
             const savedBlog = await blog.save({})
             res.status(200).json(formatBlog(savedBlog))
@@ -156,9 +156,10 @@ blogsRouter.put('/:id', async (req, res) => {
 blogsRouter.put('/:id/comments', async (req, res) => {
     console.log('COMMENT PUT')
     const body = req.body
+    console.log('comments', body.comments)
     try {
         // console.log('blog before update comments', await Blog.findById(req.params.id))
-        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, { $set: { comments: blog.comments.concat(body.comment) } }, { upsert: true }, function (err, result) { })
+        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, { $set: { comments: body.comments } }, { upsert: true }, function (err, result) { })
         // console.log('blog after update', await Blog.findById(req.params.id))
         res.status(200).send(updatedBlog).end()
     } catch (exception) {

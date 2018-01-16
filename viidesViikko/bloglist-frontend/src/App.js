@@ -23,7 +23,9 @@ class App extends React.Component {
 
       title: '',
       author: '',
-      url: ''
+      url: '',
+
+      comment: ''
     }
   }
 
@@ -176,7 +178,37 @@ class App extends React.Component {
         })
       }
 
-      <Redirect to="/" />
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
+  addCommentTo = (id) => async (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    try {
+      const foundBlog = this.state.blogs.find(blog => blog.id === id)
+      const updatedBlog = { ...foundBlog, comments: foundBlog.comments.concat(this.state.comment) }
+
+      const serveredBlog = await blogService.updateBlogComments(id, updatedBlog)
+      const parsedBlog = JSON.parse(serveredBlog.data)
+      // console.log(this.state.blogs.filter(blog => blog.id !== id))
+
+      const remainingBlogs = this.state.blogs.filter(blog => blog.id !== id)
+      const paramComment = this.state.comment
+
+      this.setState({
+        msg: `comment '${paramComment}' added to ${parsedBlog.title}`,
+        blogs: remainingBlogs.concat(parsedBlog),
+        comment: ''
+      })
+      setTimeout(() => {
+        this.setState({
+          msg: null,
+        })
+      }, 5000)
+
+      console.log(this.state.blogs)
     } catch (exception) {
       console.log(exception)
     }
@@ -226,7 +258,7 @@ class App extends React.Component {
               {/* Blogin poistoon liittyvä bugi korjattu -> redirect jos sitä ei ole enää olemassa */}
               <Route exact path="/blogs/:id" render={({ match }) =>
                 blogById(match.params.id)
-                  ? <Blog blog={blogById(match.params.id)} likeFunction={this.addLike} removeFunction={this.removeBlog} />
+                  ? <Blog blog={blogById(match.params.id)} likeFunction={this.addLike} removeFunction={this.removeBlog} commentFieldValue={this.state.comment} commentFormChangeFunction={this.handleFieldChange} commentSubmitFunction={this.addCommentTo} />
                   : <Redirect to="/" />} />
               <Route exact path="/" render={() => <Blogs blogs={this.state.blogs} />} />
             </div>
@@ -249,7 +281,7 @@ const Blogs = ({ blogs }) => {
     <div>
       <h2>blogs</h2>
       {blogs.map(blog =>
-        <div style={blogStyle}>
+        <div key={blog.id} style={blogStyle}>
           <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
         </div>
       )}

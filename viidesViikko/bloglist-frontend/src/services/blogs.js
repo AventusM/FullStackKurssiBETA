@@ -36,4 +36,9 @@ const deleteBlog = async (id) => {
   return result
 }
 
-export default { getAll, createBlog, updateBlog, setToken, deleteBlog }
+const updateBlogComments = async (id, updatedBlog) => {
+  const result = await axios.put(`${baseUrl}/${id}/comments`, updatedBlog)
+  return result.config
+}
+
+export default { getAll, createBlog, updateBlog, setToken, deleteBlog, updateBlogComments }
