@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Button, Label, ControlLabel, FormControl, FormGroup, Row, Col, ListGroup, ListGroupItem } from 'react-bootstrap'
 
 const Blog = (props) => {
   const { blog, likeFunction, removeFunction, commentSubmitFunction, commentFormChangeFunction, commentFieldValue } = props
@@ -8,40 +9,55 @@ const Blog = (props) => {
   const match = addedByAnon ?
     false : // Tarkastelua ei lähdetä suorittamaan (satavarma error)
     blog.user.username === loggedInUser.username // Normaali tarkastelu
+  const styles = {
+    likeButtonMargin: {
+      marginTop: '-58px',
+      marginLeft: '70px'
+    },
+    addingUserMargin: {
+      marginTop: '-20px'
+    },
+    deleteButtonMargin: {
+      marginTop: '5px'
+    }
+  }
   return (
     <div>
       <h2>{blog.title} {blog.author}</h2>
       <div className="blogs">
         <div><a href={blog.url}>{blog.url}</a></div>
-        <div>{blog.likes} likes <button onClick={likeFunction(blog.id)}>like</button></div>
+
+        <div>
+          <h4><Label bsStyle="primary">{blog.likes} likes</Label></h4>
+          <Button style={styles.likeButtonMargin} bsStyle="success" bsSize="xsmall" onClick={likeFunction(blog.id)}>like the blog!</Button>
+        </div>
+
         {addedByAnon ?
-          <div>added by anon</div> :
-          <div>added by {blog.user.name}</div>}
+          <div style={styles.addingUserMargin}>added by anon</div> :
+          <div style={styles.addingUserMargin}>added by {blog.user.name}</div>}
         {match || addedByAnon
-          ? <button onClick={removeFunction(blog.id)}>delete</button>
+          ? <Button style={styles.deleteButtonMargin} bsStyle="danger" bsSize="xsmall" onClick={removeFunction(blog.id)}>delete</Button>
           : <div></div>}
       </div>
       <div>
         <h3>comments</h3>
         <form onSubmit={commentSubmitFunction(blog.id)}>
-          <div>
-            <input
-              placeholder="kommentti"
-              type="text"
-              name="comment"
-              value={commentFieldValue}
-              onChange={commentFormChangeFunction}
-            />
-            <button>add comment</button>
-          </div>
+          <FormGroup>
+            <Row>
+              <Col lg={4}>
+                <FormControl placeholder="kommentti . . ." type="text" name="comment" value={commentFieldValue} onChange={commentFormChangeFunction} />
+              </Col>
+              <Col lg={4}>
+                <Button bsStyle="success" type="submit">add a comment</Button>
+              </Col>
+            </Row>
+          </FormGroup>
         </form>
       </div>
       <div>
-        <ul>
-          {blog.comments.map(comment =>
-            <li>{comment}</li>
-          )}
-        </ul>
+        {blog.comments.map(comment =>
+          <li>{comment}</li>
+        )}
       </div>
     </div>
   )

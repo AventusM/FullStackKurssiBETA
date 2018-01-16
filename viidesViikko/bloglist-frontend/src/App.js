@@ -8,6 +8,7 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import { BrowserRouter, Route, Link, NavLink, Redirect } from 'react-router-dom'
+import { Navbar, NavbarBrand, NavItem, Nav, MenuItem, NavDropdown, Button, Alert, ListGroup, ListGroupItem, Table } from 'react-bootstrap'
 
 class App extends React.Component {
   constructor(props) {
@@ -219,17 +220,17 @@ class App extends React.Component {
     const blogById = (id) => this.state.blogs.find(blog => blog.id === id)
 
     //Kokeillaan erotella täysin omana osanaan täällä
-    const blogForm = () => (
-      <Togglable buttonLabel="create new blog" ref={component => this.blogForm = component}>
-        <BlogForm
-          titleFieldValue={this.state.title}
-          authorFieldValue={this.state.author}
-          urlFieldValue={this.state.url}
-          blogFormChangeFunction={this.handleFieldChange}
-          blogFormSubmitFunction={this.addBlog}
-        />
-      </Togglable>
-    )
+    // const blogForm = () => (
+    //   <Togglable buttonLabel="create new blog" ref={component => this.blogForm = component}>
+    //     <BlogForm
+    //       titleFieldValue={this.state.title}
+    //       authorFieldValue={this.state.author}
+    //       urlFieldValue={this.state.url}
+    //       blogFormChangeFunction={this.handleFieldChange}
+    //       blogFormSubmitFunction={this.addBlog}
+    //     />
+    //   </Togglable>
+    // )
 
     if (this.state.user === null) {
       return (
@@ -239,20 +240,61 @@ class App extends React.Component {
       )
     }
 
+    const styles = {
+      navbar: {
+        backgroundColor: '#ba4b01',
+        borderRadius: '0'
+      },
+      brand: {
+        color: 'white'
+      },
+      link: {
+        color: 'black'
+      },
+      navbarButtonPadding: {
+        paddingLeft: '650px'
+      },
+      navbarButton: {
+        backgroundColor: '#f4e9e1',
+      }
+    }
+
     return (
-      <div>
-        <h2>blog app</h2>
-        <Notification error={this.state.error} msg={this.state.msg} />
+      <div className="container">
         <div>
           <BrowserRouter>
             <div>
-              {/* Voidaan tarvittaessa lisätä paddingia erottelua varten */}
-              <div>
-                <NavLink exact to="/">blogs</NavLink>&nbsp;
-                <NavLink exact to="/users">users</NavLink>&nbsp;
-                <i>{this.state.user.name} logged in</i>&nbsp;<button onClick={this.logout}>logout</button>
-              </div>
-              {blogForm()}
+              <Navbar style={styles.navbar}>
+                <Navbar.Header>
+                  <Navbar.Brand style={styles.brand}>
+                    blog app
+                </Navbar.Brand>
+                </Navbar.Header>
+                <Nav>
+                  <NavItem href="#">
+                    <NavLink style={styles.link} exact to="/">blogs</NavLink>
+                  </NavItem>
+                  <NavItem href="#">
+                    <NavLink style={styles.link} exact to="/users">users</NavLink>
+                  </NavItem>
+                  <Navbar.Text>
+                    <i style={styles.brand}>{this.state.user.name} logged in</i>
+                  </Navbar.Text>
+                  <NavItem style={styles.navbarButtonPadding}>
+                    <Button active bsSize="xsmall" style={styles.navbarButton} onClick={this.logout}>logout</Button>
+                  </NavItem>
+                </Nav>
+              </Navbar>
+              <Notification error={this.state.error} msg={this.state.msg} />
+              <Togglable buttonLabel="create new blog" ref={component => this.blogForm = component}>
+                <BlogForm
+                  titleFieldValue={this.state.title}
+                  authorFieldValue={this.state.author}
+                  urlFieldValue={this.state.url}
+                  blogFormChangeFunction={this.handleFieldChange}
+                  blogFormSubmitFunction={this.addBlog}
+                />
+              </Togglable>
               <Route exact path="/users/:id" render={({ match }) => <User user={userById(match.params.id)} />} />
               <Route exact path="/users" render={() => <Users users={this.state.users} />} />
               {/* Blogin poistoon liittyvä bugi korjattu -> redirect jos sitä ei ole enää olemassa */}
@@ -263,7 +305,7 @@ class App extends React.Component {
               <Route exact path="/" render={() => <Blogs blogs={this.state.blogs} />} />
             </div>
           </BrowserRouter>
-        </div>
+        </div >
       </div >
     )
   }
@@ -280,11 +322,13 @@ const Blogs = ({ blogs }) => {
   return (
     <div>
       <h2>blogs</h2>
-      {blogs.map(blog =>
-        <div key={blog.id} style={blogStyle}>
-          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
-        </div>
-      )}
+      <ListGroup>
+        {blogs.map(blog =>
+          <ListGroupItem key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+          </ListGroupItem>
+        )}
+      </ListGroup>
     </div>
   )
 }
@@ -295,12 +339,14 @@ const User = ({ user }) => {
   return (
     <div>
       <h2>{user.name}</h2>
-      <h3>Added blogs</h3>
-      <ul>
-        {user.blogs.map(blog =>
-          <li key={blog.id}>{blog.title} by {blog.author}</li>
-        )}
-      </ul>
+      <h4>Added blogs</h4>
+      {user.blogs.length === 0
+        ? <p>none</p>
+        : <ListGroup>
+          {user.blogs.map(blog =>
+            <ListGroupItem key={blog.id}>{blog.title} by {blog.author}</ListGroupItem>
+          )}
+        </ListGroup>}
     </div>
   )
 }
@@ -310,10 +356,10 @@ const Users = ({ users }) => {
   return (
     <div>
       <h2>users</h2>
-      <table>
+      <Table>
         <thead>
           <tr>
-            <th></th>
+            <th>name</th>
             <th>blogs added</th>
           </tr>
         </thead>
@@ -327,14 +373,14 @@ const Users = ({ users }) => {
             </tr>
           )}
         </tbody>
-      </table>
+      </Table>
     </div>
   )
 }
 
 const Login = ({ username, password, handleChange, handleSubmit, errorMsg, successMsg }) => {
   return (
-    <div>
+    <div className="container">
       <Notification error={errorMsg} msg={successMsg} />
       <LoginForm
         username={username}
