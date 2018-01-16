@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Label, ControlLabel, FormControl, FormGroup, Row, Col, ListGroup, ListGroupItem } from 'react-bootstrap'
+import { Button, Label, FormControl, FormGroup, Row, Col } from 'react-bootstrap'
 
 const Blog = (props) => {
   const { blog, likeFunction, removeFunction, commentSubmitFunction, commentFormChangeFunction, commentFieldValue } = props

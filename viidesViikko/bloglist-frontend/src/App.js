@@ -3,12 +3,12 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import userService from './services/users'
-import { Togglable, TogglableDiv } from './components/Togglable'
+import { Togglable } from './components/Togglable'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import { BrowserRouter, Route, Link, NavLink, Redirect } from 'react-router-dom'
-import { Navbar, NavbarBrand, NavItem, Nav, MenuItem, NavDropdown, Button, Alert, ListGroup, ListGroupItem, Table } from 'react-bootstrap'
+import { Navbar, NavItem, Nav, Button, ListGroup, ListGroupItem, Table } from 'react-bootstrap'
 
 class App extends React.Component {
   constructor(props) {
@@ -219,19 +219,6 @@ class App extends React.Component {
     const userById = (id) => this.state.users.find(user => user.id === id)
     const blogById = (id) => this.state.blogs.find(blog => blog.id === id)
 
-    //Kokeillaan erotella täysin omana osanaan täällä
-    // const blogForm = () => (
-    //   <Togglable buttonLabel="create new blog" ref={component => this.blogForm = component}>
-    //     <BlogForm
-    //       titleFieldValue={this.state.title}
-    //       authorFieldValue={this.state.author}
-    //       urlFieldValue={this.state.url}
-    //       blogFormChangeFunction={this.handleFieldChange}
-    //       blogFormSubmitFunction={this.addBlog}
-    //     />
-    //   </Togglable>
-    // )
-
     if (this.state.user === null) {
       return (
         <div>
@@ -312,13 +299,6 @@ class App extends React.Component {
 }
 
 const Blogs = ({ blogs }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
   return (
     <div>
       <h2>blogs</h2>
